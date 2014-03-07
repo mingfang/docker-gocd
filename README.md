@@ -1,4 +1,4 @@
 docker-goserver
 ===============
 
-Run Go Server and Agent inside Docker
+Run Go(http://www.go.cd) Server and Agent inside Docker

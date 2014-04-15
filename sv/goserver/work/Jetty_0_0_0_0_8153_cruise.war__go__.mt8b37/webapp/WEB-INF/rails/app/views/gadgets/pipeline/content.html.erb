@@ -1,0 +1,114 @@
+<% pipeline_model_in_pipeline_group = @pipeline -%>
+<div id="pipelines">
+    <div class="pipeline_bundle">
+        <div id="<%= pipelines_pipeline_dom_id(pipeline_model_in_pipeline_group) %>" class="pipeline">
+            <% cache(view_cache_key.forPipelineModelBox(pipeline_model_in_pipeline_group), :subkey => "pipeline_gadget_html") do %>
+                <div class="pipeline_header">
+                    <h3 class="title entity_title">
+                        <%= link_to(smart_word_breaker(pipeline_model_in_pipeline_group.getName()), url_for_pipeline(pipeline_model_in_pipeline_group.getName(), {:only_path => false}), {:target => "_blank"}) %>
+                    </h3>
+                </div>
+                <% pipeline_model_in_pipeline_group.getActivePipelineInstances().each do |active_pipeline_in_pipeline| -%>
+                    <div class="pipeline_instance">
+                        <% if !active_pipeline_in_pipeline.hasHistoricalData() %>
+                            <div class='status'>
+                                <span class='message'>No historical data</span>
+                            </div>
+                        <% else %>
+                            <div class='status details'>
+                                <% scope = {:active_pipeline_in_pipeline => active_pipeline_in_pipeline,
+                                                                                                             :rendering_gadget => true}; -%><% scope[:rendering_gadget] ||= false %>
+
+<div class="label">Label:<%
+       #check to see if we are currently waiting on scheduling (aka loading)
+       if scope[:active_pipeline_in_pipeline].getLabel() == 'TBD' -%>
+        <img src="images/new/ajax_loader_small.gif" alt="Scheduling..."/>
+    <% else -%>
+        <a href="<%= url_for_pipeline_value_stream_map(scope[:active_pipeline_in_pipeline], :only_path => !scope[:rendering_gadget]) -%>" <%= scope[:rendering_gadget] ? "target='_blank'" : ""%> title="<%= scope[:active_pipeline_in_pipeline].getLabel()%>"><%= truncate(scope[:active_pipeline_in_pipeline].getLabel(), :length => 40) -%></a>
+    <% end -%>
+</div>
+
+                                <% scope = {:active_pipeline_in_pipeline => active_pipeline_in_pipeline,
+                                                                                                                        :rendering_gadget => true}; -%><div class="pipeline_instance_details">
+    <div class="schedule_time" title="<%= scope[:active_pipeline_in_pipeline].getScheduledDate() %>">
+        <%= trigger_message(scope[:active_pipeline_in_pipeline].getScheduledDate().getTime(), scope[:active_pipeline_in_pipeline]) -%>
+    </div>
+    <% _scope = {:pipeline => scope[:active_pipeline_in_pipeline],
+                                                                         :total_width => 20.0,
+                                                                         :rendering_gadget => scope[:rendering_gadget] }; -%><div class="stages">
+    <div class="latest_stage">
+            <%= _scope[:pipeline].getPipelineStatusMessage() %>
+    </div>
+
+    <% _scope[:pipeline].getStageHistory().each do |stage_in_stage_bar| %>
+        <% __scope = {:pipeline => _scope[:pipeline],
+                                           :stage => stage_in_stage_bar,
+                                           :total_width => _scope[:total_width],
+                                           :rendering_gadget => _scope[:rendering_gadget]}; -%><% __scope[:rendering_gadget] ||= false %>
+<% if placeholder_stage?(__scope[:stage]) -%>
+    <span class='stage'>
+        <% ___scope = {:pipeline => __scope[:pipeline], :stage => __scope[:stage], :total_width => __scope[:total_width]}; -%><%
+   ___scope[:state] = ___scope[:stage].getState()
+   ___scope[:stage_name] = ___scope[:stage].getName()
+   ___scope[:last_run_stage] = ___scope[:pipeline].isLatestStage(___scope[:stage])
+%>
+<div class="stage_bar_wrapper <%= ___scope[:last_run_stage] ? " last_run_stage" : "" -%>">
+    <div class="stage_bar <%= ___scope[:state] -%>" title="<%= "%s (%s)" % [___scope[:stage_name], ___scope[:state]] -%>" style='width: <%= stage_width_em(___scope[:pipeline].getStageHistory().size(), ___scope[:last_run_stage], ___scope[:total_width]) -%>'>
+        <%= check_for_cancelled_contents(___scope[:state]) -%>
+    </div>
+</div>
+    </span>
+<% else -%>
+    <a href='<%= stage_detail_path(:pipeline_name => __scope[:pipeline].getName(),
+                                   :pipeline_counter => __scope[:pipeline].getCounter(),
+                                   :stage_name => __scope[:stage].getName(),
+                                   :stage_counter => __scope[:stage].getCounter(),
+                                   :only_path => !__scope[:rendering_gadget]) -%>' class='stage' <%= __scope[:rendering_gadget] ? "target='_blank'" : "" %>>
+        <% ___scope = {:pipeline => __scope[:pipeline], :stage => __scope[:stage], :total_width => __scope[:total_width]}; -%><%
+   ___scope[:state] = ___scope[:stage].getState()
+   ___scope[:stage_name] = ___scope[:stage].getName()
+   ___scope[:last_run_stage] = ___scope[:pipeline].isLatestStage(___scope[:stage])
+%>
+<div class="stage_bar_wrapper <%= ___scope[:last_run_stage] ? " last_run_stage" : "" -%>">
+    <div class="stage_bar <%= ___scope[:state] -%>" title="<%= "%s (%s)" % [___scope[:stage_name], ___scope[:state]] -%>" style='width: <%= stage_width_em(___scope[:pipeline].getStageHistory().size(), ___scope[:last_run_stage], ___scope[:total_width]) -%>'>
+        <%= check_for_cancelled_contents(___scope[:state]) -%>
+    </div>
+</div>
+    </a>
+<% end -%>
+    <% end %>
+</div>
+
+</div>
+
+                            </div>
+                            <% scope = {:active_pipeline_in_pipeline => active_pipeline_in_pipeline,
+                                                                                                           :should_display_previously_blurb => true,
+                                                                                                           :rendering_gadget => true}; -%><% scope[:rendering_gadget] ||= false %>
+<div class="previously_wrapper">
+    <% if scope[:should_display_previously_blurb] && scope[:active_pipeline_in_pipeline].isAnyStageActive() -%>
+        <% scope[:active_stage] = scope[:active_pipeline_in_pipeline].activeStage() -%>
+        <% if scope[:active_stage].hasPreviousStage() -%>
+            <div class="previously">
+                <span class="label"><%=l.string("Previously Blurb")-%></span>
+                <% scope[:previous_stage] = scope[:active_stage].getPreviousStage() -%>
+                <% scope[:previous_stage_identifier] = scope[:previous_stage].getIdentifier() -%>
+                <% scope[:stage_result] = scope[:previous_stage].getResult() -%>
+                <a class="result" href="<%= stage_detail_path_for_identifier(scope[:previous_stage_identifier], :only_path => !scope[:rendering_gadget]) -%>" <%= scope[:rendering_gadget] ? "target='_blank'" : "" -%> 
+                   title="<%= scope[:previous_stage_identifier].getPipelineLabel() -%>">
+                    <span class="color_code_small <%= scope[:stage_result] -%>">
+                        <%= check_for_cancelled_contents(scope[:stage_result]) %>
+                    </span> <%= scope[:stage_result] -%>
+                </a>
+            </div>
+        <% end -%>
+    <% end -%>
+</div>
+
+                        <% end -%>
+                    </div>
+                <% end %>
+            <% end %>
+        </div>
+    </div>
+</div>

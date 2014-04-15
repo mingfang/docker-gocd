@@ -1,0 +1,173 @@
+<% scope = {:submit_label => l.string("SAVE"), :material => @material, :url => admin_p4_update_path, :method => "PUT", :edit_mode => true}; -%><%= render(:partial => "shared/flash_message") %>
+<% _scope = {}; -%><% if @config_file_conflict -%>
+    <div id="config_save_actions" class="flash">
+        <button id="reload_config" class="reload_config primary"><%=l.string("RELOAD")-%></button>
+        <label class="inline"><%=l.string("REFRESH_CONFIG")%></label>
+    </div>
+    <script type="text/javascript">
+        Util.on_load(function() {
+           jQuery("#reload_config").click(function() {
+               var location = "<%= request.referer -%>";
+               if (location.endsWith("#")) {
+                   location = location.substring(0, location.length - 1);
+               }
+               window.location.href = location;
+           });
+        });
+    </script>
+<% end -%>
+<% form_for(:material, scope[:material],
+            :url => scope[:url],
+            :html => {:method => scope[:method],
+                      :onsubmit => "return AjaxForm.jquery_ajax_submit(this);",
+                      :class => "popup_form"}) do |f| %>
+
+    <%= md5_field %>
+    <%= current_tab_field("materials") -%>
+    <%= hidden_field_tag :material_type, scope[:material].getType() %>
+    <div class="form_content change_materials">
+        <% _scope = {}; -%><% if @errors && !@errors.empty? %>
+    <div class="form_submit_errors">
+        <div class="errors">
+            <h3><%= l.string("GLOBAL_ERRORS_MESSAGE") -%></h3>
+            <ul>
+                <% @errors.each do |error| %>
+                    <li class="error"><%= h(error.to_s) -%></li>
+                <% end %>
+            </ul>
+        </div>
+    </div>
+<% end %>
+        <div class="fieldset">
+            <div class="form_item">
+                <% _scope = {:form => f}; -%><div class="form_item_block">
+    <label><%= l.string('MATERIAL_NAME') -%></label>
+    <%= _scope[:form].text_field com.thoughtworks.cruise.config.materials.AbstractMaterialConfig::MATERIAL_NAME, :class => "form_input", :omit_id_generation => true -%>
+    <div class="contextual_help has_go_tip_right" title="<%=l.string("TOOLTIP_MATERIAL_NAME")-%>"></div>
+    <%= error_message_on(_scope[:form].object, com.thoughtworks.cruise.config.materials.AbstractMaterialConfig::MATERIAL_NAME, :css_class => "form_error") %>
+</div>
+
+                <div class="form_item_block required">
+                    <%= required_label(f, com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::SERVER_AND_PORT, l.string('P4_SERVER_AND_PORT')) -%>
+                    <%= f.text_field com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::SERVER_AND_PORT, {:class => "form_input url", :omit_id_generation => true} -%>
+                    <%= error_message_on(scope[:material], com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::SERVER_AND_PORT, :css_class => "form_error") %>
+                </div>
+
+                <% _scope = {:form => f}; -%><div class="form_item_block checkbox_row material_options">
+    <%= _scope[:form].check_box(com.thoughtworks.cruise.config.materials.ScmMaterialConfig::AUTO_UPDATE, {:include_blank => true, :class => "form_input"}, "true") -%>
+    <label for="material_<%= com.thoughtworks.cruise.config.materials.ScmMaterialConfig::AUTO_UPDATE -%>"><%= l.string('SHOULD_AUTO_UPDATE') -%></label>
+    <%= error_message_on(_scope[:form].object, com.thoughtworks.cruise.config.materials.ScmMaterialConfig::AUTO_UPDATE, :css_class => "form_error") %>
+</div>
+
+
+                <div class="form_item_block">
+                    <label><%= l.string('USERNAME') -%></label>
+                    <%= f.text_field com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::USERNAME, {:class => "form_input username", :omit_id_generation => true} -%>
+                    <%= error_message_on(scope[:material], com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::USERNAME, :css_class => "form_error") %>
+                </div>
+
+                <% if scope[:edit_mode] %>
+                    <% _scope = {:form => f}; -%><div class="form_item_block">
+    <label><%= l.string('PASSWORD') -%></label>
+    <%= _scope[:form].hidden_field(com.thoughtworks.cruise.config.materials.ScmMaterialConfig::ENCRYPTED_PASSWORD, {:include_blank => true, :class => "form_input encrypted_password"}) -%>
+    <%= _scope[:form].password_field(com.thoughtworks.cruise.config.materials.ScmMaterialConfig::PASSWORD, {:include_blank => true, :class => "form_input password", :disabled => true}) -%>
+    <%= error_message_on(_scope[:form].object, com.thoughtworks.cruise.config.materials.ScmMaterialConfig::PASSWORD, :css_class => "form_error") %>
+    <div class="checkbox_row">
+        <%= check_box_tag("material[#{com.thoughtworks.cruise.config.materials.ScmMaterialConfig::PASSWORD_CHANGED}]", "1", false, :class => "password_changed") %>
+        <label class="condition" for="material_<%= com.thoughtworks.cruise.config.materials.ScmMaterialConfig::PASSWORD_CHANGED -%>"><%= l.string("CHANGE_PASSWORD") -%></label>
+    </div>
+</div>
+
+ <script type="text/javascript">
+     var checkBox = jQuery("#material_<%= com.thoughtworks.cruise.config.materials.ScmMaterialConfig::PASSWORD_CHANGED -%>");
+     var passwordField = jQuery("#material_<%=com.thoughtworks.cruise.config.materials.ScmMaterialConfig::PASSWORD -%>");
+        Util.on_load(function() {
+            Util.bindPasswordField(checkBox, passwordField);
+        });
+ </script>
+                <% else %>
+                    <% _scope = {:form => f}; -%><%
+   _scope[:password_class] ||= 'password'
+%>
+<div class="form_item_block">
+    <label><%= l.string('PASSWORD') -%></label>
+    <%= _scope[:form].hidden_field(com.thoughtworks.cruise.config.materials.ScmMaterialConfig::ENCRYPTED_PASSWORD, {:include_blank => true, :class => "form_input encrypted_password"}) -%>
+    <%= _scope[:form].password_field(com.thoughtworks.cruise.config.materials.ScmMaterialConfig::PASSWORD, {:include_blank => true, :class => "form_input #{_scope[:password_class]}"}) -%>
+    <%= error_message_on(_scope[:form].object, com.thoughtworks.cruise.config.materials.ScmMaterialConfig::PASSWORD, :css_class => "form_error") %>
+
+    <div class="hidden">
+        <%= _scope[:form].check_box(com.thoughtworks.cruise.config.materials.ScmMaterialConfig::PASSWORD_CHANGED, {:include_blank => true, :class => "form_input password_changed", :value => "1", :checked => true, :drop_hidden_field => true}) -%>
+    </div>
+</div>
+                <% end %>
+
+                <div class="form_item_block required">
+                    <%= required_label(f, com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::VIEW, l.string('P4_VIEW')) -%>
+                    <% error = scope[:material].getP4MaterialView().errors().on(com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::VIEW)
+                       if error
+                           scope[:material].errors().add(com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::VIEW, error)
+                       end
+                    %>
+                    <%= f.text_area com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::VIEW, {:class => "form_input view", :omit_id_generation => true, :rows => 4} -%>
+                    <%= error_message_on(scope[:material], com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::VIEW, :css_class => "form_error") %>
+                </div>
+
+                <div class="form_item_block checkbox_row user_tickets">
+                    <%= f.check_box com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::USE_TICKETS, {}, "true" %>
+                    <label for="material_<%= com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::USE_TICKETS -%>"><%= l.string('P4_USE_TICKETS') -%></label>
+                    <%= error_message_on(scope[:material], com.thoughtworks.cruise.config.materials.perforce.P4MaterialConfig::USE_TICKETS, :css_class => "form_error") %>
+                </div>
+
+                <% _scope = {:form => f}; -%><div class="form_item_block">
+    <label><%= l.string('DESTINATION_DIR') -%></label>
+    <%= _scope[:form].text_field(com.thoughtworks.cruise.config.materials.ScmMaterialConfig::FOLDER, {:include_blank => true, :class => "form_input", :omit_id_generation => true}) -%>
+    <%= error_message_on(_scope[:form].object, com.thoughtworks.cruise.config.materials.ScmMaterialConfig::FOLDER, :css_class => "form_error") %>
+</div>
+                <% _scope = {:username => ".username", :password => ".password", :url => ".url", :type => "p4", :encrypted_password => ".encrypted_password", :password_changed => ".password_changed", :view => ".view"}; -%><% check_connection_button_id = "check_connection_" + _scope[:type] -%>
+<%= submit_button(l.string("CHECK_CONNECTION"), :type => "button", :id => check_connection_button_id) -%>
+<div id="vcsconnection-message_<%=_scope[:type]-%>"></div>
+<script type="text/javascript">
+    Util.on_load(function() {
+        new CheckConnection().hookupCheckConnection("#<%=check_connection_button_id-%>", "<%=params[:pipeline_name]-%>", "<%= _scope[:type] %>", "<%=_scope[:url]-%>", "<%=_scope[:username]-%>",
+                "<%=_scope[:password]-%>", "<%=_scope[:encrypted_password]-%>", "<%=_scope[:password_changed]-%>", "<%= _scope[:project_path] -%>", "<%= _scope[:domain] -%>", "<%= _scope[:view] -%>");
+    });
+</script>
+
+                <div class="clear"></div>
+            </div>
+            <% _scope = {}; -%><p class="required">
+	<span class="asterisk"><%= l.string("REQUIRED_FIELD")%></span><%= l.string("REQUIRED_FIELD_MESSAGE")-%>
+</p>
+
+        </div>
+        <% _scope = {:form => f}; -%><h3><%= l.string("BLACKLIST") -%></h3>
+
+<div class="fieldset">
+    <label><%= l.string("BLACKLIST_DESCRIPTION") -%></label>
+    <% _scope[:form].object.filter().each do |ignored_file|
+        error = ignored_file.errors().on(com.thoughtworks.cruise.config.materials.IgnoredFiles::PATTERN)
+        if error
+            _scope[:form].object.errors().add(com.thoughtworks.cruise.config.materials.ScmMaterialConfig::FILTER, error)
+        end
+    end %>
+
+    <%= _scope[:form].text_area(com.thoughtworks.cruise.config.materials.ScmMaterialConfig::FILTER, {:include_blank => true, :class => "form_input", :omit_id_generation => true, :rows => 2}) -%>
+    <%= error_message_on(_scope[:form].object, com.thoughtworks.cruise.config.materials.ScmMaterialConfig::FILTER, :css_class => "form_error") %>
+    <div class="clear"></div>
+</div>
+
+    </div>
+
+    <% _scope = {:submit_label => scope[:submit_label]}; -%><div class="form_buttons actions">
+    <%= submit_button(_scope[:submit_label], :class => 'primary finish') %>
+    <button class="left submit close_modalbox_control"><span><%= l.string('CANCEL') -%></span></button>
+</div>
+    <% _scope = {}; -%><script type="text/javascript">
+    Util.on_load(function() {
+        jQuery(".has_go_tip").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10});
+        jQuery(".has_go_tip_right").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "right"});
+        jQuery(".has_go_tip_left").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "left" });
+        jQuery(".has_go_tip_top").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "top" });
+    });
+</script>
+<% end %>

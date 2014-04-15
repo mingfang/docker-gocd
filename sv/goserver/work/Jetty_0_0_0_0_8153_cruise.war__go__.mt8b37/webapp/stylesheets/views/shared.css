@@ -1,0 +1,249 @@
+/**
+ * Shared.css
+ */
+ 
+
+/**
+ * TABLE OF CONTENTS
+ *
+ * =CONFIG_ERROR
+ * =ERROR
+ * =SSL_NOT_CONFIGURED_ERROR
+ * =PARTIALS
+ * ==AJAX_REFRESHER
+ * ==APPLICATION_NAV
+ * ==BARE_STAGE
+ * ==BARE_STAGE_BAR
+ * ==BARE_STAGE_IN_PIPELINE_BAR
+ * ==BUILD_CAUSE
+ * ==BUILD_CAUSE_POPUP
+ * ==CONFIG_SAVE_ACTIONS
+ * ==CONVERT_TOOL_TIPS
+ * ==ERROR_MESSAGING_COUNTER
+ * ==FLASH_MESSAGE
+ * ==FOOTER
+ * ==FORM_BUTTONS
+ * ==FORM_REQUIRED_MESSAGE
+ * ==HEADER
+ * ==MODIFICATION
+ * ==MODIFICATION_FOR_TABLE
+ * ==PAUSE_CONTROL
+ * ==PAUSE_INFO
+ * ==PAUSE_INFO_AND_CONTROL
+ * ==PIPELINE
+ * ==PIPELINE_BREADCRUMB
+ * ==SELECTOR
+ * ==SELECTORS
+ * ==STAGE
+ * ==STAGE_BAR
+ * ==STAGE_DETAILS_CHART
+ * ==TABS
+ * ==TRIGGER_PIPELINE
+ * ==TRIGGER_PIPELINE_WITH_OPTIONS
+ */
+ 
+
+/**
+ * =CONFIG_ERROR
+**/
+
+
+/**
+ * =ERROR
+**/
+
+/**
+ * =SSL_NOT_CONFIGURED_ERROR
+**/
+
+/**
+ * =PARTIALS
+**/
+
+
+/**
+ * ==AJAX_REFRESHER
+**/
+
+
+/**
+ * ==APPLICATION_NAV
+**/
+
+/**
+ * ==BARE_STAGE
+**/
+
+
+/**
+ * ==BARE_STAGE_BAR
+**/
+
+
+/**
+ * ==BARE_STAGE_IN_PIPELINE_BAR
+**/
+
+
+/**
+ * ==BUILD_CAUSE
+**/
+
+
+/**
+ * ==BUILD_CAUSE_POPUP
+**/
+
+
+/**
+ * ==CONFIG_SAVE_ACTIONS
+**/
+
+
+/**
+ * ==CONVERT_TOOL_TIPS
+**/
+
+
+/**
+ * ==ERROR_MESSAGING_COUNTER
+**/
+#cruise_message_body{
+  max-height: 400px;
+  padding: 10px;
+  overflow: auto;
+}
+*+html #cruise_message_body{
+  height: expression(this.scrollHeight >  400 ? "400px" : "auto");
+  overflow: auto;
+}
+#cruise_message_body .error {
+  margin-bottom: 10px;
+  border-bottom: 1px dotted #CCC;
+  padding-bottom: 10px;
+}
+#cruise_message_body .warning {
+  margin-bottom: 10px;
+  border-bottom: 1px dotted #CCC;
+  padding-bottom: 10px;
+}
+#cruise_message_body .message {
+  font-weight: bold;
+   font-size: 12px;
+}
+#cruise_message_body .error .description {
+  border-left: 5px solid #f7d4d4;
+  padding-left: 10px;
+  font-size: 11px;
+  margin-top: 5px;
+  color: #555;
+}
+#cruise_message_body .warning .description {
+  border-left: 5px solid #FFF0C0;
+  padding-left: 10px;
+  font-size: 11px;
+  margin-top: 5px;
+  color: #555;
+}
+#cruise_message_body .messages {
+  overflow: scroll;
+}
+
+
+/**
+ * ==FLASH_MESSAGE
+**/
+
+
+/**
+ * ==FOOTER
+**/
+
+
+/**
+ * ==FORM_BUTTONS
+**/
+
+
+/**
+ * ==FORM_REQUIRED_MESSAGE
+**/
+
+
+/**
+ * ==HEADER
+**/
+
+/**
+ * ==MODIFICATION
+**/
+
+
+/**
+ * ==MODIFICATION_FOR_TABLE
+**/
+
+
+/**
+ * ==PAUSE_CONTROL
+**/
+
+
+/**
+ * ==PAUSE_INFO
+**/
+
+
+/**
+ * ==PAUSE_INFO_AND_CONTROL
+**/
+
+
+/**
+ * ==PIPELINE
+**/
+
+
+/**
+ * ==PIPELINE_BREADCRUMB
+**/
+
+
+/**
+ * ==SELECTOR
+**/
+
+
+/**
+ * ==SELECTORS
+**/
+
+
+/**
+ * ==STAGE
+**/
+
+
+/**
+ * ==STAGE_BAR
+**/
+
+
+/**
+ * ==STAGE_DETAILS_CHART
+**/
+
+
+/**
+ * ==TABS
+**/
+
+
+/**
+ * ==TRIGGER_PIPELINE
+**/
+
+
+/**
+ * ==TRIGGER_PIPELINE_WITH_OPTIONS
+**/

@@ -1,0 +1,11 @@
+<ul class="copyright" onclick="dashboard_periodical_executer.stop();">
+    <li>Copyright &copy; 2013 <a href="http://www.thoughtworks.com/products" target='blank'>ThoughtWorks, Inc.</a></li>
+    <li class="last"><%=l.string("GO_VERSION")-%>: <%=version%></li>
+</ul>
+<ul class="links">
+    <li><%=link_to("(cc) " +  l.string("CCTRAY_FEED"), url_for_path('cctray.xml'))%></li>
+    <li><%=link_to(l.string("SERVER_DETAILS"), url_for_path('about'))%></li>
+    <li><a target="_blank" href="http://support.thoughtworks.com/categories/20002778-go-community-support"><%=l.string("COMMUNITY")%></a></li>
+    <li><a target="_blank" href="http://www.thoughtworks.com/products/support"><%=l.string("SUPPORT")%></a></li>
+    <li class="last"><%=link_to(l.string("HELP_SMALL"), url_for_path('help/index.html'), :target => "_blank")%></li>
+</ul>

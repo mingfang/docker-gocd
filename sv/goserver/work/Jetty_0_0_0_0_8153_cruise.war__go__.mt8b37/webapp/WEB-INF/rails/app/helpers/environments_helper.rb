@@ -1,0 +1,42 @@
+
+module EnvironmentsHelper
+  def url_for_pipeline(pipeline_name, options = {})
+    url_for_path("/tab/pipeline/history/#{pipeline_name}", options)
+  end
+
+  def stage_width_em(total_number_of_stages, is_last_running_stage,total_width)
+    last_running_width = is_last_running_stage ? 0.25 : 0.0833
+    round_to(((total_width / total_number_of_stages) - last_running_width), 4).to_s + "em"
+  end
+
+  def stage_width_percent(total_number_of_stages, is_last_running_stage,total_width)
+    last_running_width = is_last_running_stage ? 0 : 0
+    round_to(((total_width / total_number_of_stages) - last_running_width), 4).to_s + "%"
+  end
+
+  def round_to(float, precision)
+    (float * 10**precision).round.to_f / 10**precision
+  end
+
+  def env_pipeline_dom_id(pipeline_model)
+    "environment_pipeline_#{pipeline_name(pipeline_model)}_panel"
+  end
+  
+  def env_dom_id(environment_name)
+    "environment_#{environment_name}_panel"
+  end
+
+  def is_last(list, elem)
+    return list[list.length - 1] == elem
+  end
+
+  def pipeline_name pipeline_model
+    pipeline_model.getLatestPipelineInstance().getName()
+  end
+
+  def environment_update_form_options
+    {:url => environment_update_url, :method => "put",
+     :success => "Modalbox.hide(); location.href=Util.header_value(request.getAllHeaders(), 'Location');",
+     :failure => "jQuery('#env_form_error_box').html(Util.flash_message(request.responseText));"}
+  end
+end

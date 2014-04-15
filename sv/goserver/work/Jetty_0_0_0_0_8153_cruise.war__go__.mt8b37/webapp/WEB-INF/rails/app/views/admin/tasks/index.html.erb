@@ -1,0 +1,100 @@
+<h3><%= l.string("TASKS") %></h3>
+<table class="list_table reorderable_table tasks_list_table">
+    <thead>
+    <tr>
+        <th><%= l.string("ORDER") %></th>
+        <th><%= l.string("TASK_TYPE") %></th>
+        <th class="run_ifs"><%= l.string("RUN_IFS") %></th>
+        <th><%= l.string("PROPERTIES") %></th>
+        <th><%= l.string("ON_CANCEL") %></th>
+        <th class=""><%= l.string("REMOVE") %></th>
+    </tr>
+    </thead>
+    <tbody>
+    <% @tasks.each_with_index do |task_for_listing, task_config_index| %>
+        <%- tvm_of_task_listing = task_view_service.getViewModel(task_for_listing, 'list-entry') -%>
+        <% scope = {:tvm => tvm_of_task_listing, :task_config_index => task_config_index, :task_config => tvm_of_task_listing.getModel()}; -%><tr class="task_<%= scope[:task_config_index] %>">
+    <td>
+        <% unless scope[:task_config_index] == 0 %>
+            <%= form_tag(admin_task_decrement_index_path(:task_index => scope[:task_config_index]), :method => :POST) %>
+            <%= md5_field %>
+            <button type="submit" value="" class="promote_button" title="<%= l.string("MOVE_TASK_UP") %>">
+                <div class="promote_up"></div>
+            </button>
+            <%= end_form_tag %>
+        <% end %>
+        <% unless scope[:task_config_index] == @tasks.size() - 1 %>
+            <%= form_tag(admin_task_increment_index_path(:task_index => scope[:task_config_index]), :method => :POST) %>
+            <%= md5_field %>
+            <button type="submit" value="" class="promote_button" title="<%= l.string("MOVE_TASK_DOWN") %>">
+                <div class="promote_down"></div>
+            </button>
+            <%= end_form_tag %>
+        <% end %>
+    </td>
+    <%- js_frag = "Util.ajax_modal('#{admin_task_edit_path(:task_index => scope[:task_config_index], :type => task_type_from_class(scope[:task_config]))}', {overlayClose: false, title: '#{l.string("EDIT_TASK_OF_TYPE", [scope[:task_config].getTypeForDisplay()])}'}, function(text){return text}, true)" -%>
+    <%= render_pluggable_template(scope[:tvm], { :scope => scope, :modify_onclick_callback => js_frag}) -%>
+    <td class="">
+        <%= form_tag admin_task_delete_path(:task_index => scope[:task_config_index]), {:method => :delete, :id => "delete_task_#{scope[:task_config_index]}"} %>
+        <%= md5_field %>
+        <span class="icon_remove delete_parent" id="trigger_delete_task_<%= scope[:task_config_index] %>">
+            <% _scope = {:button_id => "trigger_delete_task_#{scope[:task_config_index]}", :message => "Are you sure you want to delete the task at index '#{scope[:task_config_index] + 1}' ? ", :on_confirmation_js => "$('#{"delete_task_#{scope[:task_config_index]}"}').submit()"}; -%><script type="text/javascript">
+    <%- button_container = _scope[:button_container] -%>
+    <%- button_id = _scope[:button_id] -%>
+    <%- button_selector =  button_container==nil ? button_id : button_container+' #'+button_id -%>
+    <%- prompt_selector =  button_container==nil ? button_id +' #warning_prompt' : button_container +' #warning_prompt' -%>
+    <%- message = _scope[:message] -%>
+    <%- on_confirmation_js = _scope[:on_confirmation_js] -%>
+    jQuery(Util.escapeDotsFromId('<%=button_selector-%>')).click(function() {
+        Modalbox.show(jQuery(Util.escapeDotsFromId('<%=prompt_selector-%>'))[0], {overlayClose: false, title: '<%= l.string("CONFIRM_DELETION") %>'});
+    });
+</script>
+<div id="warning_prompt" class="warning" style="display:none;">
+    <div class="ui-dialog-content">
+        <p><%=message-%></p>
+    </div>
+    <div class="form_buttons actions">
+        <%= submit_button(l.string("PROCEED"), :class=> "primary", :onclick => on_confirmation_js ) %>
+        <%= submit_button(l.string("CANCEL"), :onclick => "Modalbox.hide()", :type => "button") %>
+    </div>
+</div>
+        </span>
+        <%= end_form_tag -%>
+    </td>
+</tr>
+    <% end %>
+    <tr>
+        <td>&nbsp;</td>
+        <td colspan="5">
+            <%= action_icon({:type => "add", :text => l.string("ADD_NEW_TASK"), :id => "add_new_task_dropdown_link", :href => "#", :menu_link => true}) %>
+            <div id="new_task_popup" class="hidden enhanced_dropdown">
+                <ul>
+                    <% @task_view_models.each do |tvm_of_task_listing| %>
+                        <% task_of_tvm_in_listing = tvm_of_task_listing.getModel() %>
+                        <% if task_of_tvm_in_listing.getTypeForDisplay() == "Custom Command"
+                             @tvm_of_custom_command = task_of_tvm_in_listing
+                        %>
+                        <% else %>
+                            <li>
+                                <%= link_to task_of_tvm_in_listing.getTypeForDisplay(), '#', :onclick => "Modalbox.show('#{admin_task_new_path(:type => task_of_tvm_in_listing.getTaskType())}', {overlayClose: false, title: '#{l.string("ADD_NEW_TASK")} - #{task_of_tvm_in_listing.getTypeForDisplay}'})", :class => task_css_class(task_of_tvm_in_listing) -%>
+                            </li>
+                        <% end %>
+                    <% end %>
+                    <li class="menu_item_last_with_border">
+                        <%= link_to "More...", '#', :onclick => "ModalBoxWhichClosesAutoCompleteDropDownBeforeClosing.show('#{admin_task_new_path(:type => @tvm_of_custom_command.getTaskType())}', {overlayClose: false, title: '#{l.string("ADD_NEW_TASK")} - #{@tvm_of_custom_command.getTypeForDisplay()}'})", :class => task_css_class(@tvm_of_custom_command) -%>
+                    </li>
+
+                </ul>
+            </div>
+        </td>
+    </tr>
+    </tbody>
+</table>
+<script type="text/javascript">
+    AjaxForm.error_box_selector = '#MB_content';
+    Util.on_load(function() {
+        var newTaskPopup = new MicroContentPopup(jQuery('#new_task_popup').get(0), new MicroContentPopup.NoOpHandler());
+        var newTaskPopupShower = new MicroContentPopup.ClickShower(newTaskPopup);
+        newTaskPopupShower.bindShowButton(jQuery('#add_new_task_dropdown_link').get(0));
+    });
+</script>

@@ -1,0 +1,97 @@
+/**
+ * Users.css
+ */
+ 
+
+/**
+ * TABLE OF CONTENTS
+ *
+ * =NEW
+ * =ROLES
+ * =SEARCH
+ * =USERS
+ * =PARTIALS
+ * ==USER_RESULTS_TABLE
+ */
+ 
+
+/**
+ * =NEW
+**/
+
+
+/**
+ * =ROLES
+**/
+
+/**
+ * =SEARCH
+**/
+
+/**
+ * =USERS
+**/
+
+#user_summary h1 {
+    margin-bottom: 10px;
+}
+
+#users_form .add_new_users a {
+    color: BLACK;
+}
+
+#users_form {
+ position: relative;
+ top: 0;
+ left: 0;
+}
+
+#users_form .edit_panel {
+    padding: 0;
+    margin-bottom: 10px;
+    background: #FFF;
+    -moz-border-radius: 0px;
+    -webkit-border-radius: 0px;
+    border-radius: 0px;
+    border: 0;
+    margin-left: 0;
+}
+
+#user_summary #dd_users_ajax_float{
+    width:100%;
+}
+
+#users_form .isFixed {
+    /*box-shadow: 0 4px 5px #666;*/
+        /*-moz-box-shadow: 0 4px 5px #666;*/
+        /*-webkit-box-shadow: 0 4px 5px #666;*/
+    padding: 8px 15px;
+    z-index: 1000;
+    position: fixed;
+    top: 86px;
+    background: url("../../images/g9/backgrounds/bg_actionpanel_shadow.png") repeat-x scroll 0 0 transparent;
+    height: 35px;
+}
+
+#users_form .isFixed a.link_as_button {
+    margin-right: 8px;
+}
+
+#dd_users_ajax_float {
+  position: absolute;
+  top: 0px;
+  left: 0;
+  width: 99%;
+}
+
+#users_form .list_table {
+    margin-top: 40px;
+}
+
+/**
+ * =PARTIALS
+**/
+
+/**
+ * ==USER_RESULTS_TABLE
+**/

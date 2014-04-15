@@ -1,0 +1,3 @@
+<% if (scope[:task].getTaskType() == "ExecTask") %>
+    <%= render :partial => "new_exec_task.html", :locals => {:scope => {:task => scope[:task], :form => scope[:form]}} %>
+<% end %>

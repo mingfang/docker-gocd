@@ -1,0 +1,8 @@
+.workflow_creation_type .radio_option{
+    float: left;
+    margin-right: 24px;
+}
+
+.workflow_creation_contents{
+    clear: both;
+}

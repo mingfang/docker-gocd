@@ -1,0 +1,60 @@
+<div class="hilighted">
+    <% scope = {:selection => @admin_selection, :selection_field_name => "admin", :disabled_message => l.string("ADMIN_PRIVILEGE_SWITCHING_DISABLED_AS_GROUP_PRIVILEGES_ARE_USED")}; -%><% import com.thoughtworks.cruise.presentation.TriStateSelection unless defined? TriStateSelection
+   scope[:view_id] = "view_for_#{scope[:selection].object_id}"
+   scope[:field_id] = "field_for_#{scope[:selection].object_id}"
+   scope[:selection_field_name] ||= "selections" %>
+<div class='selectors'>
+    <span id="<%= scope[:view_id] %>" class='selector'><%= scope[:selection].getValue() %></span>
+    <select name="<%= scope[:selection_field_name] -%>[<%= scope[:selection].getValue() %>]" id="<%= scope[:field_id] %>" class='hidden' <%= scope[:selection].isEnabled() ? '' : "disabled='disabled'" %>>
+        <option value='add'
+                <% if scope[:selection].getAction() == TriStateSelection::Action.add %>selected='true'
+                <% end %>>add
+        </option>
+        <option value='remove'
+                <% if scope[:selection].getAction() == TriStateSelection::Action.remove %>selected='true'
+                <% end %>>remove
+        </option>
+        <% if scope[:selection].getAction() == TriStateSelection::Action.nochange %>
+            <option value='nochange' selected='true'>nochange</option>
+        <% end %>
+    </select>
+    <% unless scope[:selection].isEnabled() %>
+        <div class="tristate_disabled_message">
+            <%= scope[:disabled_message] %>
+        </div>
+    <% end %>
+    <script type="text/javascript">
+        new TriStateCheckbox($('<%= scope[:view_id] %>'), $('<%= scope[:field_id] %>'), <%= scope[:selection].isEnabled() -%>);
+    </script>
+</div>
+</div>
+<% scope = {}; -%><% @selections.each do |selection_in_tri_state_selections| %>
+    <% _scope = {:selection => selection_in_tri_state_selections}; -%><% import com.thoughtworks.cruise.presentation.TriStateSelection unless defined? TriStateSelection
+   _scope[:view_id] = "view_for_#{_scope[:selection].object_id}"
+   _scope[:field_id] = "field_for_#{_scope[:selection].object_id}"
+   _scope[:selection_field_name] ||= "selections" %>
+<div class='selectors'>
+    <span id="<%= _scope[:view_id] %>" class='selector'><%= _scope[:selection].getValue() %></span>
+    <select name="<%= _scope[:selection_field_name] -%>[<%= _scope[:selection].getValue() %>]" id="<%= _scope[:field_id] %>" class='hidden' <%= _scope[:selection].isEnabled() ? '' : "disabled='disabled'" %>>
+        <option value='add'
+                <% if _scope[:selection].getAction() == TriStateSelection::Action.add %>selected='true'
+                <% end %>>add
+        </option>
+        <option value='remove'
+                <% if _scope[:selection].getAction() == TriStateSelection::Action.remove %>selected='true'
+                <% end %>>remove
+        </option>
+        <% if _scope[:selection].getAction() == TriStateSelection::Action.nochange %>
+            <option value='nochange' selected='true'>nochange</option>
+        <% end %>
+    </select>
+    <% unless _scope[:selection].isEnabled() %>
+        <div class="tristate_disabled_message">
+            <%= _scope[:disabled_message] %>
+        </div>
+    <% end %>
+    <script type="text/javascript">
+        new TriStateCheckbox($('<%= _scope[:view_id] %>'), $('<%= _scope[:field_id] %>'), <%= _scope[:selection].isEnabled() -%>);
+    </script>
+</div>
+<% end %>

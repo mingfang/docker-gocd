@@ -1,0 +1,16 @@
+## layout level variable
+#set ($title = 'Exception Detail - Cruise')
+#set($extra_css_list = ['toolkit', 'pipeline-tab','transparent_message'])
+#parse("shared/_header.vm")
+
+    #parse("shared/_flash_message.vm")
+    <div id="yui-main">
+      <div class="yui-b"></div><!-- end yui-b -->
+    </div>
+    <script type="text/javascript">
+        $('trans_content').update("$esc.javascript("$errorMessage")");
+        var transMessage = new TransMessage('trans_message', document.body,
+                                                {type:TransMessage.TYPE_ERROR, offsetTop:200, autoHide:false});
+    </script>
+</body>
+</html>

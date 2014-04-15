@@ -1,0 +1,28 @@
+<html>
+<head>
+    <title>foo</title>
+
+    <script src="/go/javascripts/prototype.js" type="text/javascript"></script>
+    <script src="/go/gadgets/js/rpc.js?v=1.1-beta5" type="text/javascript"></script>
+    <script src="/go/javascripts/tw_gadget.js?1289973606" type="text/javascript"></script>
+
+    <script type="text/javascript">
+        function initGadget(){
+            tw_gadget.init('https://blrstdcrspair02.thoughtworks.com:8154/go/gadgets/ifr');
+            tw_gadget.addGadget('gadget', 'https://10.4.3.56:8443/gadgets/card_activity.xml', {
+                up_pipelineName: 'GadgetRenderingServer',
+                nocache: 1,
+                debug: 1,
+                up_card_numbers: '1,2,3,4',
+                up_project: 'a'
+            });
+        }
+    </script>
+</head>
+<body onLoad="initGadget();">
+<div id="gadget" class="gadget-container">
+    <h3>Hello World Gadget</h3>
+    <hr/>
+</div>
+</body>
+</html>

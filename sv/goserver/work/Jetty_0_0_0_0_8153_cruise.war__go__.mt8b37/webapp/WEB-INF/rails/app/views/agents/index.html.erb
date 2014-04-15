@@ -1,0 +1,285 @@
+<%- @view_title = "Agents" -%>
+<div class="page_header" style='overflow:inherit;'>
+    <h1 class="entity_title">Agents</h1>
+    <div class="filter_agents">
+    <%= form_tag(agents_path, :id => 'agents_filter_form', :method => :get) -%>
+        <div id="filter_help" class="enhanced_dropdown hidden">
+            <div class="filter_help_instructions">
+                <p class='heading'>Available tags</p>
+                <div>
+                    <p>name:</p>
+                    <p>os:</p>
+                    <p>ip:</p>
+                    <p>status:</p>
+                    <p>resource:</p>
+                    <p>environment:</p>
+                </div>
+                <p class='heading'>Values</p>
+                <div>
+                    <p><%= l.string("AGENT_FILTER_EXACT_MATCH_HELP") -%></p>
+                </div>
+                <p><%=l.string("FILTERS_HELP_LINK")%></p>
+            </div>
+        </div>
+        <%- default_url_options.each do |key, val| -%>
+           <%- unless key.to_sym == :filter -%>
+              <%= hidden_field_tag key, val -%>
+           <%- end -%>
+        <%- end -%>
+        <%= text_field_tag :filter, params[:filter], :placeholder => "tag: value", :id => "filter_text" -%>
+        <button type="submit" class="submit primary"><%= l.string("FILTER") -%></button>
+        <%= link_to l.string("CLEAR"), agents_path(:filter => ''), :id => "clear_filter", :class => "link_as_button" -%>
+    <%= end_form_tag %>
+</div>
+
+<script type="text/javascript">
+    Util.on_load(function() {
+        var urls = <%= ['ip', 'status', 'resource', 'os', 'name', 'environment'].inject({}) {|map, name| map.merge(name => agent_filter_autocomplete_path(:action => name)) }.to_json -%>;
+        var filter = new AgentFilter(jQuery("#filter_text").get(0), jQuery("#filter_help").get(0), jQuery('.page_header').get(0), urls);
+        filter.createHelp();
+        filter.hookupAutocomplete();
+    });
+</script>
+
+    <% if has_operate_permission_for_agents? %>
+    <div class="edit_panel" id="dd_ajax_float" style='float:right;'>
+        <%= form_tag(edit_agents_path(:column => params[:column], :order => params[:order]), :id => 'agents_form') -%>
+        <input id="agent_edit_operation" type="hidden" name="operation" />
+
+        <div style="display: none" id="actual_agent_selectors">
+            <% scope = {:agents => @agents}; -%><% scope[:agents].each do |agent| -%>
+    <%= agent_selector_without_cell(agent.getUuid(), 'selected[]', params[:selected]) %>
+<%- end -%>
+        </div>
+
+        <%= submit_button("Enable", :onclick_lambda => "Util.set_value('agent_edit_operation', 'Enable')", :name => "Enable") %>
+        <%= submit_button("Disable", :onclick_lambda => "Util.set_value('agent_edit_operation', 'Disable')", :name => "Disable") %>
+        <%= submit_button("Delete", :onclick_lambda => "Util.set_value('agent_edit_operation', 'Delete')", :name => "Delete") %>
+
+        <%= submit_button("Resources", :id => "show_resources_panel", :class => "show_panel", :type => "select", :text_color => "dark") %>
+
+        <div id="resources_panel" class="hidden resources_panel agent_edit_popup enhanced_dropdown">
+            <div class='resources_selector scrollable_panel'>
+                <div class="loading"></div>
+            </div>
+            <div class="add_panel hidden">
+                <input type="text" name="add_resource" class='new_resource new_field'/>
+                <%= submit_button("Add", :class => "apply_resources apply_button submit_small primary", :name => "resource_operation") %>
+
+                <div class="validation_message error hidden">Invalid character. Please use a-z, A-Z, 0-9, fullstop, underscore, hyphen and pipe.</div>
+            </div>
+            <div class="no_selection_error error hidden">Please select one or more agents first.</div>
+        </div>
+
+
+        <%= submit_button("Environments", :id => "show_environments_panel", :class => "show_panel", :type => "select", :text_color => "dark") %>
+
+        <div id="environments_panel" class="hidden environments_panel agent_edit_popup enhanced_dropdown">
+            <div class='environments_selector scrollable_panel'>
+                <div class="loading"></div>
+            </div>
+            <div class="add_panel hidden">
+                <%= submit_button("Apply", :class => "submit_small primary apply_button", :name => "Apply",:onclick_lambda => "Util.set_value('agent_edit_operation', 'Apply_Environment')") %>
+            </div>
+            <div class="no_selection_error error hidden">Please select one or more agents first.</div>
+            <div class="no_environments_error error hidden">No environments are defined.</div>
+        </div>
+        <script type="text/javascript">
+            Util.on_load(function() {
+                var environmentPanel = new MicroContentPopup($('environments_panel'), new EditPopupHandler.AddOnlyHandler('<%= url_for(:action => 'environment_selector') %>', $('agents_form'), Util.are_any_rows_selected('.agents .agent_select')));
+                var environmentPanelShower = new MicroContentPopup.ClickShower(environmentPanel);
+                environmentPanelShower.bindShowButton($('show_environments_panel'), jQuery('.page_header').get(0));
+            });
+        </script>
+
+        <%= end_form_tag %>
+    </div>
+    <% end %>
+</div>
+<%= content_wrapper_tag %>
+    <% if has_operate_permission_for_agents? %>
+    <div id="agents_form_container">
+        <div id="ajax_agents_header" class="clear_float">
+            <% scope = {}; -%><ul class="agent_counts list_aggregation clear_float">
+    <li class='pending'>Pending: <%= @agents_pending %></li>
+    <li class='enabled'>Enabled: <%= @agents_enabled %></li>
+    <li class='disabled'>Disabled: <%= @agents_disabled %></li>
+</ul>
+        </div>
+    </div>
+
+
+    
+    <script type="text/javascript">
+        Util.on_load(function() {
+            var resource_panel_callback_handler = new EditPopupHandler.AddEditHandler('<%= url_for(:action => 'resource_selector') %>', $('agents_form'), Util.are_any_rows_selected('.agents .agent_select'), AgentUtil.validate_resource_name, 'agent_edit_operation', 'Apply_Resource', 'Add_Resource');
+            var resource_panel = new MicroContentPopup($('resources_panel'), resource_panel_callback_handler);
+            var resource_panel_shower = new MicroContentPopup.ClickShower(resource_panel);
+            resource_panel_shower.bindShowButton($('show_resources_panel'), jQuery('.page_header').get(0));
+            resource_panel_callback_handler.setDefaultText($$('.new_resource')[0], "Create New");
+         });
+    </script>
+    <% end %>
+
+
+    <div id="ajax_agents_table" class='agents_table'>
+        <% scope = {}; -%><% scope[:exclude_columns] ||= []
+   scope[:sortable_columns] = true if scope[:sortable_columns].nil?
+   scope[:show_only_disabled] = false if scope[:show_only_disabled].nil?
+   scope[:selector_name] ||= 'selected[]'
+   scope[:selected] ||= params[:selected]
+   scope[:agents] ||= @agents
+%>
+
+<script type="text/javascript">
+Util.on_load(function() {
+    jQuery("#select_all_agents").live('click',function() {
+        var val = this.checked;
+        jQuery(".agent_select").each(function() {
+            this.checked = val;
+        });
+    });
+
+    jQuery("input.agent_select").live("click", function() {
+        var unchecked_check_boxes = jQuery("input.agent_select:not(:checked)");
+        if(unchecked_check_boxes.length > 0) {
+            jQuery("#select_all_agents").removeAttr("checked");
+        }
+    });
+})
+
+</script>
+
+
+<table id='agent_details' class='agents list_table <%=" sortable_table" if scope[:sortable_columns]%> selectable_table'>
+    <thead>
+    <tr class='agent_header'>
+        <% if has_operate_permission_for_agents? %>
+            <th class='selector'>
+                <%= check_box_tag 'accept', '', false, {:id => 'select_all_agents', :class => 'agent_select'} -%>
+            </th>
+        <% end -%>
+
+        <% unless scope[:exclude_columns].include?('hostname') -%>
+            <th class='hostname'><%= column_header("Agent Name",  "hostname", scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless scope[:exclude_columns].include?('location') -%>
+            <th class='location'><%= column_header("Sandbox", "location", scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless scope[:exclude_columns].include?('operating_system') -%>
+            <th class='operating_system'><%= column_header("OS", "operating_system", scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless scope[:exclude_columns].include?('ip_address') -%>
+            <th class='ip_address'><%= column_header("IP Address", "ip_address", scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless scope[:exclude_columns].include?('status') -%>
+            <th class='status'><%= column_header("Status", "status", scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless scope[:exclude_columns].include?('usable_space') -%>
+            <th class='usable_space'><%= column_header("Free Space", "usable_space", scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless scope[:exclude_columns].include?('resources') -%>
+            <th class='resources'><%= column_header("Resources", "resources", scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless scope[:exclude_columns].include?('environments') -%>
+            <th class='environments'><%= column_header("Environments", "environments", scope[:sortable_columns]) %></th>
+        <% end -%>
+    </tr>
+    </thead>
+    <tbody>
+    <% scope[:agents].each do |agent_in_agent_table| %>
+        <tr class='agent_instance <%= get_agent_status_class(scope[:show_only_disabled],agent_in_agent_table.getStatus()) %>' id='<%= agent_in_agent_table.getUuid() %>'>
+            <% agent_uuid = agent_in_agent_table.getUuid()-%>
+            <% if has_operate_permission_for_agents? %>
+                <%= agent_selector(agent_uuid, scope[:selector_name], scope[:selected]) %>
+            <% end %>
+            <% unless scope[:exclude_columns].include?('hostname') -%>
+
+                <%hostname = agent_in_agent_table.getHostname() -%>
+                <% if agent_in_agent_table.getStatus().isRegistered() -%>
+                    <%span_text = link_to(hostname, agent_detail_path(:uuid => agent_uuid)) -%>
+                 <% else -%>
+                    <%span_text = hostname -%>
+                <% end -%>
+                <td class='hostname' title='<%= hostname %>'>
+                    <span class='agent_hostname'><%= span_text %></span>
+                </td>
+
+            <% end -%>
+
+            <% unless scope[:exclude_columns].include?('location') -%>
+                <% display_value = smart_word_breaker(agent_in_agent_table.getLocation())%>
+                <%= cell_with_title( display_value, 'location', agent_in_agent_table.getLocation()) %>
+            <% end -%>
+
+            <% unless scope[:exclude_columns].include?('operating_system') -%>
+                <%= cell_with_title( agent_in_agent_table.getOperatingSystem(), 'operating_system') %>
+            <% end -%>
+
+            <% unless scope[:exclude_columns].include?('ip_address') -%>
+                <%= cell_with_title( agent_in_agent_table.getIpAddress(), 'ip_address') %>
+            <% end -%>
+
+            <% unless scope[:exclude_columns].include?('status') -%>
+                <%= agent_status_cell(agent_in_agent_table) %>
+            <% end -%>
+
+            <% unless scope[:exclude_columns].include?('usable_space') -%>
+                <%= cell_with_title( agent_in_agent_table.freeDiskSpace(), 'usable_space') %>
+            <% end -%>
+
+            <% unless scope[:exclude_columns].include?('resources') -%>
+                <%= piped_cell(agent_in_agent_table.getResources(), l.string("NO_RESOURCES_SPECIFIED"), "resources") %>
+            <% end -%>
+
+            <% unless scope[:exclude_columns].include?('environments') -%>
+                <%= piped_cell(agent_in_agent_table.getEnvironments(), l.string("NO_ENVIRONMENTS_SPECIFIED"), "environments") %>
+            <% end -%>
+
+
+        </tr>
+    <% end %>
+    </tbody>
+</table>
+    </div>
+<%= end_content_wrapper %>
+<script type="text/javascript">
+
+    Util.on_load(function() {
+        var replicator = new FieldStateReplicator();
+        var replicated_checkbox_group_ids = ['ajax_agents_table', 'actual_agent_selectors'];
+        function checkbox_replicator_id_reader(elem) {
+            return elem.value;
+        }
+        for (var i = 0; i < replicated_checkbox_group_ids.length; i++) {
+            replicator.register_all_matching($(replicated_checkbox_group_ids[i]), '.agent_select', checkbox_replicator_id_reader);
+        }
+        <% if auto_refresh? %>
+        AjaxRefreshers.addRefresher(new AgentsAjaxRefresher('<%= url_for(:action => 'index', :format=>"json", :column=>params[:column], :order=>params[:order], :filter=>params[:filter] ) %>', '<%= url_for_login %>', replicator, replicated_checkbox_group_ids, checkbox_replicator_id_reader));
+        <% end %>
+
+        $('agents_form').observe("keydown", function (evt) {
+            if (evt.keyCode == Event.KEY_RETURN) {
+                evt.stop();
+                return false;
+            }
+            return true;
+        });
+    });
+</script>
+<script type="text/javascript">
+    Util.on_load(function() {
+        jQuery(document).ready(function($) {
+            var filterHelp = jQuery('#filter_help');
+            var filterTextOffset = jQuery('#filter_text').offset();
+            filterHelp.css('top', 32).css('left', filterTextOffset.left);
+        });
+    });
+</script>

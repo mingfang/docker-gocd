@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.thoughtworks.cruise.domain" default-access="field" default-lazy="false">
+    <class name="PipelineMaterialRevision" table="pipelineMaterialRevisions" >
+        <id name="id" column="id">
+            <generator class="identity"/>
+        </id>
+        <property name="name"/>
+        <property name="folder"/>
+        <property name="materialId"/>
+        <property name="actualFromRevisionId"/>
+        <property name="pipelineId"/>
+        <many-to-one name="fromRevision" column="fromRevisionId" foreign-key="fromRevisionId" not-null="true"/>
+        <many-to-one name="toRevision" column="toRevisionId" foreign-key="toRevisionId" not-null="true"/>
+        <property name="changed"/>
+    </class>
+</hibernate-mapping>

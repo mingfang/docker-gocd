@@ -1,0 +1,20 @@
+/* admin layout */
+
+.admin_wrapper {
+
+}
+
+.admin_sidebar {
+  float: left;
+  width: 200px;
+}
+
+.admin_workspace {
+  margin-left: 215px; /* add 15px to width of sidebar for the gutter */
+}
+
+
+
+.sub_tabs_container{
+  clear: none;
+}

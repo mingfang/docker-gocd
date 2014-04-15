@@ -1,0 +1,209 @@
+<% scope = {:submit_label => l.string("SAVE"), :material => @material, :url => admin_package_update_path, :method => "PUT"}; -%><%= render(:partial => "shared/flash_message") %>
+<% _scope = {}; -%><% if @config_file_conflict -%>
+    <div id="config_save_actions" class="flash">
+        <button id="reload_config" class="reload_config primary"><%=l.string("RELOAD")-%></button>
+        <label class="inline"><%=l.string("REFRESH_CONFIG")%></label>
+    </div>
+    <script type="text/javascript">
+        Util.on_load(function() {
+           jQuery("#reload_config").click(function() {
+               var location = "<%= request.referer -%>";
+               if (location.endsWith("#")) {
+                   location = location.substring(0, location.length - 1);
+               }
+               window.location.href = location;
+           });
+        });
+    </script>
+<% end -%>
+<% form_for(:material, scope[:material],
+            :url => scope[:url],
+            :html => {:method => scope[:method],
+                      :onsubmit => "return AjaxForm.jquery_ajax_submit(this);",
+                      :class => "popup_form"}) do |f| %>
+
+    <%= md5_field %>
+    <%= current_tab_field("materials") -%>
+    <%= hidden_field_tag :material_type, scope[:material].getType() %>
+    <div class="new_form_content change_materials">
+        <%- if repository_packages_map_from_config.empty? -%>
+            <p class="warnings">No repositories found. Please <a href='<%=package_repositories_new_path%>'>add a package repository</a> first.</p>
+        <%- end -%>
+
+        <div class="new_form_item_block vtop" id="repository_div">
+            <div class="new_form_label">
+                <%= required_label(f, "repository", l.string('REPOSITORY')) -%>
+                <div class="inline_instruction">Choose a configured repository</div>
+            </div>
+            <div class="new_form_control required">
+                <%= select_tag "material[package_definition[repositoryId]]", [], {:id => "repository"} %>
+            </div>
+            <div id="repository_error"></div>
+        </div>
+
+        <div class="new_form_item checkbox_row">
+            <div class="new_form_label">
+                <%= required_label(f, com.thoughtworks.cruise.config.materials.PackageMaterialConfig::PACKAGE_ID, l.string('PACKAGE')) -%>
+            </div>
+            <div class="new_form_control required">
+                <div class="checkbox_row_inline">
+                    <%= radio_button_tag "material[create_or_associate_pkg_def]", "associate", true, :id => "chooseExisting" %>
+                    <label for="chooseExisting"><%= "Choose Existing" -%></label>
+                </div>
+
+                <div class="checkbox_row_inline">
+                    <%= radio_button_tag "material[create_or_associate_pkg_def]", "create", false, :id => "addNew" %>
+                    <label for="addNew"><%= "Define New" -%></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="new_form_item">
+            <div class="new_form_label"></div>
+            <div class="new_form_control">
+                <%= f.select com.thoughtworks.cruise.config.materials.PackageMaterialConfig::PACKAGE_ID, [], {}, {:id => "package"} -%>
+                <%= error_message_on(scope[:material], com.thoughtworks.cruise.config.materials.PackageMaterialConfig::PACKAGE_ID, :css_class => "form_error") %>
+            </div>
+        </div>
+
+        <%- state = (params[:material] && params[:material][:create_or_associate_pkg_def]) ? params[:material][:create_or_associate_pkg_def] : '' -%>
+        <div class="package_definition">
+            <div class="package_configuration">
+                <%- if (state == "associate" || state == "") -%>
+                    <% _scope = {:package_configuration => @package_configuration}; -%><h2 class="new-admin-subtitle"><span>Package Configuration</span></h2>
+<% if @errors && !@errors.empty? %>
+    <div class="form_submit_errors">
+        <div class="errors">
+            <h3><%= l.string("GLOBAL_ERRORS_MESSAGE") -%></h3>
+            <ul>
+                <% @errors.each do |error| %>
+                    <li class="error"><%= h(error.to_s) -%></li>
+                <% end %>
+            </ul>
+        </div>
+    </div>
+<% end %>
+<%- if _scope[:package_configuration] %>
+    <div class="new_form_item_block">
+        <div class="new_form_label">
+            <%= label_tag "package_name_label", "Package Name" %>
+        </div>
+        <div class="new_form_control">
+            <%= text_field_tag "package_name_value", _scope[:package_configuration].name, {:disabled => "disabled"} %>
+        </div>
+    </div>
+    <%- _scope[:package_configuration].properties.each do |property| %>
+        <div class="new_form_item">
+            <div class="new_form_label">
+                <%= label_tag "package_#{property.name}_label", property.display_name %>
+            </div>
+            <div class="new_form_control">
+                <%= text_field_tag "package_#{property.name}_value", property.value, {:disabled => "disabled"} %>
+            </div>
+        </div>
+    <%- end %>
+    <div class="new_form_item">
+        <div class="new_form_label"></div>
+        <div class="new_form_control">
+            <div class="field no-label-element">
+    <%= submit_button(l.string("CHECK_PACKAGE"), :type => "button", :id => "check_package") -%>
+    <span id="package_check_message"></span>
+</div>
+        </div>
+    </div>
+<%- end %>
+
+
+
+                <%- else -%>
+                    <% _scope = {:package_configuration => @package_configuration}; -%><h2 class="new-admin-subtitle"><span>New Package</span></h2>
+<% if @errors && !@errors.empty? %>
+    <div class="form_submit_errors">
+        <div class="errors">
+            <h3><%= l.string("GLOBAL_ERRORS_MESSAGE") -%></h3>
+            <ul>
+                <% @errors.each do |error| %>
+                    <li class="error"><%= h(error.to_s) -%></li>
+                <% end %>
+            </ul>
+        </div>
+    </div>
+<% end %>
+<p class="information"><%= l.string("NEW_GLOBAL_PACKAGE_WARNING") %></p>
+<%- if _scope[:package_configuration] %>
+    <div class="new_form_item_block">
+        <div class="new_form_label required">
+            <%= label_tag "", required_label_text("Package Name") %>
+        </div>
+        <div class="new_form_control">
+            <%= text_field_tag "material[package_definition[name]]", _scope[:package_configuration].name %>
+        </div>
+    </div>
+    <%- _scope[:package_configuration].properties.each_with_index do |property, index| %>
+        <div class="new_form_item">
+            <%- if property.is_mandatory -%>
+                <div class="new_form_label required">
+                    <%= label_tag "", required_label_text(property.display_name) %>
+                </div>
+            <%- else -%>
+                <div class="new_form_label">
+                    <%= label_tag "", property.display_name %>
+                </div>
+            <%- end -%>
+
+            <%= hidden_field_tag "material[package_definition[configuration][#{index}][configurationKey][name]]", property.name %>
+            <div class="new_form_control">
+                <% if property.is_secure %>
+                    <%= password_field_tag "material[package_definition[configuration][#{index}][configurationValue][value]]", property.value %>
+                    <%= hidden_field_tag "material[package_definition[configuration][#{index}][isChanged]]", true %>
+                <% else %>
+                    <%= text_field_tag "material[package_definition[configuration][#{index}][configurationValue][value]]", property.value %>
+                <% end %>
+            </div>
+        </div>
+    <%- end %>
+    <div class="new_form_item">
+        <div class="new_form_label"></div>
+        <div class="new_form_control">
+            <div class="field no-label-element">
+    <%= submit_button(l.string("CHECK_PACKAGE"), :type => "button", :id => "check_package") -%>
+    <span id="package_check_message"></span>
+</div>
+        </div>
+    </div>
+<%- end %>
+
+                <%- end -%>
+            </div>
+        </div>
+        <% _scope = {}; -%><p class="required">
+	<span class="asterisk"><%= l.string("REQUIRED_FIELD")%></span><%= l.string("REQUIRED_FIELD_MESSAGE")-%>
+</p>
+    </div>
+    <% _scope = {:submit_label => scope[:submit_label]}; -%><div class="form_buttons actions">
+    <%= submit_button(_scope[:submit_label], :class => 'primary finish') %>
+    <button class="left submit close_modalbox_control"><span><%= l.string('CANCEL') -%></span></button>
+</div>
+    <% _scope = {}; -%><script type="text/javascript">
+    Util.on_load(function() {
+        jQuery(".has_go_tip").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10});
+        jQuery(".has_go_tip_right").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "right"});
+        jQuery(".has_go_tip_left").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "left" });
+        jQuery(".has_go_tip_top").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "top" });
+    });
+</script>
+<% end %>
+
+<script type="text/javascript">
+    var data = <%= repository_packages_map_from_config.to_json %>;
+    var repo = <%= scope[:material].getPackageDefinition() && scope[:material].getPackageDefinition().getRepository() ? scope[:material].getPackageDefinition().getRepository().getId().to_json  : "".to_json-%>;
+    var pkg = <%= scope[:material].getPackageDefinition() ? scope[:material].getPackageDefinition().getId().to_json : "".to_json -%>;
+    var initialState = <%= (params[:material] && params[:material][:create_or_associate_pkg_def]) ? params[:material][:create_or_associate_pkg_def].to_json : "".to_json -%>;
+    var showPackageDefPath = <%= package_definitions_show_path(:repo_id => "$repoId$", :package_id => "$packageId$").to_json %>;
+    var newPackageDefPath = <%= package_definitions_new_path(:repo_id => "$repoId$").to_json %>;
+    var pluginMissingErrorMessage = <%= l.string("ASSOCIATED_PLUGIN_NOT_FOUND").to_json %>;
+    Util.on_load(function () {
+        new PackageMaterialCheckConnection("<%= package_definition_check_connection_path %>").bind(".new_form_content.change_materials", "#check_package", "#package_check_message");
+        new PackageMaterialDefinition(data, repo, pkg, showPackageDefPath, newPackageDefPath, pluginMissingErrorMessage).init(initialState);
+    });
+</script>

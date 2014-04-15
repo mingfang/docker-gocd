@@ -1,0 +1,56 @@
+#templates.view {
+  height: 400px;
+  overflow: hidden; }
+  #templates.view .navigation, #templates.view .content {
+    height: 390px; }
+  #templates.view .navigation {
+    overflow: hidden; }
+    #templates.view .navigation:hover {
+      overflow-y: auto; }
+  #templates.view .content {
+    overflow-y: auto; }
+    #templates.view .content .section {
+      clear: both;
+      padding: 5px 0 0; }
+  #templates.view h2, #templates.view h3 {
+    font-weight: normal; }
+  #templates.view h3 {
+    font-size: 12px; }
+  #templates.view .summary {
+    margin-bottom: 3px; }
+    #templates.view .summary .hint {
+      height: 14px;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden; }
+#templates .tasks_view_list {
+  clear: both;
+  float: none; }
+  #templates .tasks_view_list > li {
+    margin-top: 5px; }
+    #templates .tasks_view_list > li:hover {
+      background-color: #fefefe; }
+  #templates .tasks_view_list li {
+    padding: 4px;
+    border-bottom: 1px dotted #999999;
+    float: none;
+    clear: both; }
+    #templates .tasks_view_list li .condition {
+      background: #f6f6f6;
+      padding: 3px;
+      border-radius: 3px;
+      float: right;
+      color: #999999; }
+    #templates .tasks_view_list li ul {
+      background: url("../../images/andare/component-treenav.png") no-repeat scroll 0 -70px transparent;
+      float: none;
+      clear: both;
+      padding-left: 15px; }
+      #templates .tasks_view_list li ul li {
+        border-bottom: none; }
+  #templates .tasks_view_list code {
+    clear: both;
+    color: #999999; }
+    #templates .tasks_view_list code .command, #templates .tasks_view_list code .arguments, #templates .tasks_view_list code .pipeline, #templates .tasks_view_list code .stage, #templates .tasks_view_list code .job, #templates .tasks_view_list code .source, #templates .tasks_view_list code .destination {
+      color: #666666;
+      font-weight: bold; }

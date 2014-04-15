@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMapConfig PUBLIC "-//iBATIS.com//DTD SQL Map Config 2.0//EN"
+        "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+
+    <settings cacheModelsEnabled="true"/>
+
+    <typeHandler
+            javaType="com.thoughtworks.cruise.domain.JobState"
+            callback="com.thoughtworks.cruise.server.dao.handlers.BuildStateTypeHandlerCallback"/>
+
+    <typeHandler
+            javaType="com.thoughtworks.cruise.domain.JobResult"
+            callback="com.thoughtworks.cruise.server.dao.handlers.BuildResultTypeHandlerCallback"/>
+    <typeHandler
+            javaType="com.thoughtworks.cruise.config.VariableValueConfig"
+            callback="com.thoughtworks.cruise.server.dao.handlers.VariableValueConfigTypeHandlerCallback"/>
+    <typeHandler
+            javaType="com.thoughtworks.cruise.domain.StageResult"
+            callback="com.thoughtworks.cruise.server.dao.handlers.StageResultTypeHandlerCallback"/>
+    <typeHandler
+            javaType="com.thoughtworks.cruise.domain.StageState"
+            callback="com.thoughtworks.cruise.server.dao.handlers.StageStateTypeHandlerCallback"/>
+    <typeHandler
+            javaType="com.thoughtworks.cruise.domain.BuildOutputMatcher"
+            callback="com.thoughtworks.cruise.server.dao.handlers.BuildMatcherHandlerCallback"/>
+    <typeHandler
+            javaType="com.thoughtworks.cruise.domain.buildcause.BuildCause"
+            callback="com.thoughtworks.cruise.server.dao.handlers.BuildCauseHandlerCallback"/>
+
+    <typeHandler
+            javaType="com.thoughtworks.cruise.domain.ArtifactType"
+            callback="com.thoughtworks.cruise.server.dao.handlers.ArtifactTypeHandlerCallback"/>
+
+    <typeHandler
+            javaType="java.io.File"
+            callback="com.thoughtworks.cruise.server.dao.handlers.FileTypeHandlerCallback"/>
+
+    <typeHandler
+            javaType="com.thoughtworks.cruise.domain.materials.ModifiedAction"
+            callback="com.thoughtworks.cruise.server.dao.handlers.ModifiedActionTypeHandlerCallback"/>
+
+    <typeHandler
+            javaType="com.thoughtworks.cruise.domain.StageEvent"
+            callback="com.thoughtworks.cruise.server.dao.handlers.StageEventTypeHandlerCallback"/>
+
+    <sqlMap resource="com/thoughtworks/cruise/server/dao/maps/DbMetadata.xml"/>
+    <sqlMap resource="com/thoughtworks/cruise/server/dao/maps/ArtifactPlan.xml"/>
+    <sqlMap resource="com/thoughtworks/cruise/server/dao/maps/ArtifactPropertiesGenerator.xml"/>
+    <sqlMap resource="com/thoughtworks/cruise/server/dao/maps/Pipeline.xml"/>
+    <sqlMap resource="com/thoughtworks/cruise/server/dao/maps/Stage.xml"/>
+    <sqlMap resource="com/thoughtworks/cruise/server/dao/maps/JobInstance.xml"/>
+    <sqlMap resource="com/thoughtworks/cruise/server/dao/maps/Resource.xml"/>
+    <sqlMap resource="com/thoughtworks/cruise/server/dao/maps/BuildStateTransition.xml"/>
+    <sqlMap resource="com/thoughtworks/cruise/server/dao/maps/Property.xml"/>
+</sqlMapConfig>

@@ -1,0 +1,468 @@
+<!DOCTYPE HTML>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <title>
+    <%= @view_title %> - Go
+</title>
+<%= yield :before_stylesheets %>
+<% css_dir = File.join(File.dirname(__FILE__), "../../../../../stylesheets/") %>
+
+<%= stylesheet_link_tag "structure/reset.css" %>
+
+<!-- LEGACY Structure css, TODO: migrate these to structure/application.css and patterns -->
+<%= stylesheet_link_tag "main", "layout", "structure", "ie_hacks" %>
+
+<!-- END - LEGACY Structure css, TODO: migrate these to structure/application.css and patterns -->
+
+<!-- Structure css -->
+
+<%= stylesheet_link_tag "structure/application.css" %>
+<% if use_compressed_js? %>
+    <%= stylesheet_link_tag "plugins/plugins.css" %>
+<% else %>
+    <!-- Plugins css -->
+    <%= stylesheet_link_tag "plugins/treeview.css",
+                            "plugins/jquery.autocomplete.css"
+    %>
+<% end %>
+
+<% if use_compressed_js? %>
+    <%= stylesheet_link_tag "patterns/patterns.css" %>
+<% else %>
+    <!-- Patterns css -->
+    <% styles =           [ "patterns/action_icons.css",
+                            "patterns/buttons.css",
+                            "patterns/dropdowns.css",
+                            "patterns/forms.css",
+                            "patterns/messages.css",
+                            "patterns/modalbox.css",
+                            "patterns/status_visualizations.css",
+                            "patterns/tables.css",
+                            "patterns/tabs.css",
+                            "patterns/titles.css",
+                            "patterns/tooltips.css",
+                            "patterns/wizard_steps.css"]
+
+        File.open(File.join(css_dir, 'patterns/all.css'), 'w') do |all_css|
+            styles.each do |style|
+              all_css.puts(File.read(File.join(css_dir, style)))
+            end
+        end
+    %>
+    <%= stylesheet_link_tag "patterns/all.css" %>
+<% end %>
+
+
+<!-- LEGACY Module pieces css, TODO: migrate these to patterns/plugins/views-->
+<%= stylesheet_link_tag "module.css"%>
+<!-- END - LEGACY Module pieces css, TODO: migrate these to patterns/plugins/views-->
+
+
+<!-- Views css -->
+<% if use_compressed_js? %>
+    <%= stylesheet_link_tag "views/views.css" %>
+<% else %>
+    <% styles =           [ "views/admin_jobs.css",
+                            "views/admin_materials.css",
+                            "views/admin_materials_dependency.css",
+                            "views/admin_materials_git.css",
+                            "views/admin_materials_hg.css",
+                            "views/admin_materials_p4.css",
+                            "views/admin_materials_shared.css",
+                            "views/admin_materials_svn.css",
+                            "views/admin_pipeline_groups.css",
+                            "views/admin_pipelines_snippet.css",
+                            "views/admin_pipelines.css",
+                            "views/admin_pipelines_materials.css",
+                            "views/admin_shared.css",
+                            "views/admin_stages.css",
+                            "views/admin_tasks.css",
+                            "views/admin_tasks_ant.css",
+                            "views/admin_tasks_exec.css",
+                            "views/admin_tasks_fetch.css",
+                            "views/admin_tasks_nant.css",
+                            "views/admin_tasks_rake.css",
+                            "views/admin_tasks_shared.css",
+                            "views/admin_templates.css",
+                            "views/admin_user_roles.css",
+                            "views/shared_go_license_about_to_expire.css",
+                            "views/agents.css",
+                            "views/backup.css",
+                            "views/comparison.css",
+                            "views/config_server.css",
+                            "views/environments.css",
+                            "views/failures.css",
+                            "views/gadgets_pipeline.css",
+                            "views/pipelines.css",
+                            "views/server.css",
+                            "views/shared.css",
+                            "views/stages.css",
+                            "views/users.css"]
+
+        File.open(File.join(css_dir, 'views/all.css'), 'w') do |all_css|
+            styles.each do |style|
+              all_css.puts(File.read(File.join(css_dir, style)))
+            end
+        end
+    %>
+    <%= stylesheet_link_tag "views/all.css" %>
+<% end %>
+
+
+<!-- less-to-css -->
+<% if use_compressed_js? %>
+    <%= stylesheet_link_tag "css_sass/css_sass.css" %>
+<% else %>
+    <% styles = [
+            "css_sass/base/mixins.css",
+            "css_sass/base/reset-g9.css",
+            "css_sass/base/sprites.css",
+            "css_sass/base/variables.css",
+            "css_sass/components/alerts.css",
+            "css_sass/components/labels-badges.css",
+            "css_sass/components/messages.css",
+            "css_sass/components/navbar.css",
+            "css_sass/components/pagination.css",
+            "css_sass/components/treenav.css",
+            "css_sass/components/wizard.css",
+            "css_sass/gadgets/breadcrumb.css",
+            "css_sass/gadgets/button-groups.css",
+            "css_sass/gadgets/docked-toolbar.css",
+            "css_sass/gadgets/dropdowns.css",
+            "css_sass/gadgets/forms.css",
+            "css_sass/gadgets/layouts.css",
+            "css_sass/gadgets/modals.css",
+            "css_sass/gadgets/popovers.css",
+            "css_sass/gadgets/progress-bars.css",
+            "css_sass/gadgets/scaffolding.css",
+            "css_sass/gadgets/tabs.css",
+            "css_sass/gadgets/tooltip.css",
+            "css_sass/global/layout.css",
+            "css_sass/global/reset.css",
+            "css_sass/global/responsive.css",
+            "css_sass/global/typography.css",
+            "css_sass/go-pages/agent.css",
+            "css_sass/go-pages/admin.css",
+            "css_sass/go-pages/admin/templates.css",
+            "css_sass/go-pages/vsm.css",
+            "css_sass/go-pages/history-panel.css",
+            "css_sass/go-pages/pipeline.css"
+        ]
+
+        File.open(File.join(css_dir, 'css_sass/css_sass.css'), 'w') do |all_css|
+            styles.each do |style|
+                all_css.puts(File.read(File.join(css_dir, style)))
+            end
+        end
+    %>
+<%= stylesheet_link_tag "css_sass/css_sass.css" %>
+<% end %>
+
+<!-- START: prototype hooks for css injection -->
+<% if params[:controller] == "prototype" %>
+    <%= stylesheet_link_tag "prototype_#{params[:action]}" %>
+<% end %>
+<% if params[:css_file] %>
+    <%= stylesheet_link_tag "#{params[:css_file]}" %>
+<% end %>
+
+<!-- END: prototype hooks for css injection -->
+
+<% if use_compressed_js? %>
+    <%= javascript_include_tag '/go/compressed/all.js' %>
+    <![if !IE]>
+    <%= javascript_include_tag '/go/compressed/d3.js' %>
+    <![endif]>
+    <!--[if gt IE 8]><!-->
+    <%= javascript_include_tag '/go/compressed/d3.js' %>
+    <!--<![endif]-->
+<% else %>
+        <%= javascript_include_tag "es5-shim.js", "d3.js", "jquery.js", "jquery.tipTip", "jquery.treeview","jquery.timeago", "jquery.autocomplete", "jquery.validate", "jquery.url", "jquery_no_conflict", "prototype", "effects", "util", "accordion", "cookie_utils", "application", "agent_filter", "modalbox",
+                                   "edit_popup_handler", "tristate_checkbox", "ajax_refresher", "ajax_refreshers", "agents_ajax_refresher", "default_text", "agent_util", "env_edit_form",
+                                   "field_state_replicator", "css_toggling", "micro_content_popup" , "ajax_popup_handler", "autocomplete", "controls", "stage_detail_ajax_refresher", 'form_fields_table',
+                                   "pipeline_visualization", "helpers","pipeline_material_revision", "dashboard_ajax_refresher.js", "tabs.js", "dirty_tracker","pipeline_selector", "element_aligner",
+                                   "environment_variables_form_field_validator", "server_configuration", "ajax_microcontent_popup_util", "environment_variables", "env_edit_form", "ui.core",
+                                   "ui.dialog", "jquery.dirtyform", "compare_pipelines", "task_editor", "stage_history", "group_permissions", "simple-pipeline", "highcharts", "tabs_wizard", "check_connection",
+                                   "jquery-ui-1.7.3.custom.min.js", "command_snippet_lookup", "enhanced_modalbox", "vsm", "vsm_renderer", "package_material_definition", "bootstrap.min.js", "package_repository_configuration","package_material_check_connection", "custom_tree_view", "view_template",
+                                   "choose_existing_package_definition_state", "add_new_package_definition_state","fetch_pipelines_using_given_package", "user_options_on_header",
+                                   "package_material_definition_for_new_pipeline_wizard", "choose_existing_package_definition_state_for_new_pipeline_wizard", "add_new_package_definition_state_for_new_pipeline_wizard",
+                                   "jquery.highlight", "jquery.listsearch", "jquery.wizard", "jquery.go-tabs",
+                                   "angular.1.0.8.min.js", "angular-resource.1.0.8.min.js","jquery.ba-throttle-debounce.min.js", "pipeline_search"
+
+        %>
+
+<% end %>
+
+<%= yield :after_javascript %>
+<link rel="shortcut icon" href="<%=image_path('cruise.ico')%>"/>
+</head>
+<body id="<%= page_name %>" class="<%= page_name %>">
+<div id="body_bg">
+    <div id="header">
+        <% scope = {:admin_tab_url => '/tab/admin'}; -%><div class="header clear_float">
+  <a href="<%= url_for_path('pipelines') %>" id="application_logo">&nbsp;</a>
+  <% _scope = {:admin_tab_url => scope[:admin_tab_url]}; -%><div class="application_nav">
+  <%= hidden_field_tag("server_time", Time.now.to_i, :id => "server_timestamp") -%>
+    <% if @user.anonymous? %>
+        <ul class="user">
+            <li class="help">
+                <%= link_to(l.string("HELP_SMALL"), url_for_path('help/index.html'), :target => "_blank") %>
+            </li>
+        </ul>
+    <% else %>
+        <ul class="user">
+            <li class="current_user icon">
+                <a href="#" class="current_user_name dropdown-arrow-icon"><%= @user.display_name %></a>
+                <ul class='enhanced_dropdown hidden'>
+                    <li>
+                        <%= link_to l.string('PREFERENCES_LOWER'), url_for_path('/tab/mycruise/user') %>
+                    </li>
+                    <li class="logout">
+                        <%= link_to l.string('Sign out'), url_for_path('auth/logout'), :id => "nav-logout", :class => "sign_out" %>
+                    </li>
+                </ul>
+            </li>
+            <li class="help">
+                <%= link_to(l.string("HELP_SMALL"), url_for_path('help/index.html'), :target => "_blank") %>
+            </li>
+        </ul>
+    <% end %>
+
+  <% unless @no_tabs %>
+    <ul class="tabs">
+        <%= tab_with_display_name('recent-activity', l.string('PIPELINES'), :url => '/pipelines') %>
+        <%= tab_with_display_name("environments", l.string('ENVIRONMENTS_CAPS')) %>
+        <%= tab_with_display_name('agents', l.string("AGENTS")) %>
+        <li id="cruise-header-tab-admin" class="<%="current" if @current_tab_name == "admin"%>">
+            <%
+               admin_header_link_label = l.string("ADMIN")
+            %>
+            <% unless can_view_admin_page? -%>
+                <span><%= admin_header_link_label -%></span>
+            <% else -%>
+                <%= link_to admin_header_link_label, '#', 'data-toggle' => 'dropdown', 'class' => 'dropdown-arrow-icon' -%>
+                <ul class="dropdown-menu" role="menu">
+                    <%- if is_user_an_admin? -%>
+                        <li role="presentation">
+    <%= link_to l.string("PIPELINES_POPUP_TITLE"), pipeline_groups_path -%>
+</li>
+<li role="presentation">
+    <%= link_to l.string("TEMPLATES"), templates_path -%>
+</li>
+<li role="presentation">
+    <%= link_to l.string("PIPELINES_SNIPPET"), config_view_path -%>
+</li>
+<li role="presentation">
+    <%= link_to l.string("SERVER_CONFIGURATION"), edit_server_config_path -%>
+</li>
+<li role="presentation">
+    <%= link_to "User Summary", user_listing_path -%>
+</li>
+<li role="presentation">
+    <%= link_to "OAuth Clients", oauth_clients_path -%>
+</li>
+<li role="presentation">
+    <%= link_to "OAuth Enabled Gadget Providers", gadgets_oauth_clients_path -%>
+</li>
+<li role="presentation">
+    <%= link_to "Backup", backup_server_path -%>
+</li>
+<li role="presentation">
+    <%= link_to l.string("PLUGINS_TAB"), plugins_listing_path -%>
+</li>
+<li role="presentation">
+    <%= link_to l.string("PACKAGE_REPOSITORY_TAB"), package_repositories_new_path -%>
+</li>
+                    <%- elsif is_user_a_group_admin? -%>
+                        <li role="presentation">
+    <%= link_to l.string("PIPELINES_POPUP_TITLE"), pipeline_groups_path -%>
+</li>
+<%- if is_user_a_template_admin? -%>
+    <li role="presentation">
+    <%= link_to l.string("TEMPLATES"), templates_path -%>
+</li>
+<%- end -%>
+<li role="presentation">
+    <%= link_to l.string("PIPELINES_SNIPPET"), pipelines_snippet_path -%>
+</li>
+<li role="presentation">
+    <%= link_to l.string("PLUGINS_TAB"), plugins_listing_path -%>
+</li>
+<li role="presentation">
+    <%= link_to l.string("PACKAGE_REPOSITORY_TAB"), package_repositories_new_path -%>
+</li>
+                    <%- elsif is_user_a_template_admin? -%>
+                        <li role="presentation">
+    <%= link_to l.string("TEMPLATES"), templates_path -%>
+</li>
+                    <%- end -%>
+                </ul>
+            <% end -%>
+        </li>
+    </ul>
+    <div class="error_messaging_counter">
+  <div id="cruise_message_counts" class="cruise_messages">
+      <% if !@current_server_health_states.isRealSuccess() %>
+    <a onclick="Modalbox.show($('cruise_message_body'), {title: 'Error and warning messages', overlayClose:false})">
+        <span class="messages">
+            <% if @current_server_health_states.warningCount() > 0  && @current_server_health_states.errorCount() > 0 %>
+                <span class="error_count"><%= l.errorCount(@current_server_health_states.errorCount()) %></span> &
+                <span class="warning_count"><%= l.warningCount(@current_server_health_states.warningCount()) %></span>
+            <% else %>
+                <% if @current_server_health_states.errorCount() > 0 %>
+                    <span class="error_count"><%= l.errorCount(@current_server_health_states.errorCount()) %></span>
+                <% end %>
+                <% if @current_server_health_states.warningCount() > 0 %>
+                    <span class="warning_count"><%= l.warningCount(@current_server_health_states.warningCount()) %></span>
+                <% end %>
+            <% end %>
+        </span>
+    </a>
+<% end %>
+  </div>
+  <div id="cruise_message_body" style="display:none;">
+      <% if !@current_server_health_states.isRealSuccess() %>
+        <% @current_server_health_states.each do |state_in_messages_body| %>
+            <% if !state_in_messages_body.isRealSuccess() %>
+                <div class="<%=state_in_messages_body.getLogLevel().name().downcase%>">
+                    <div class="message"><%=state_in_messages_body.getMessageWithTimestamp()%></div>
+                    <div class="description"><%=state_in_messages_body.getDescription()%></div>
+                </div>
+            <% end %>
+        <% end %>
+<% end %>
+  </div>
+
+  <%- if auto_refresh? -%>
+     <script type="text/javascript">
+        Util.on_load(function() {new AjaxRefresher('<%= global_message_path() %>', null);});
+     </script>
+    <%- end -%>
+</div>
+    <% license_expiry_time = session.delete("LICENSE_EXPIRING_IN")
+   if license_expiry_time -%>
+    <div class="hidden">
+        <div  class="license_about_to_expire content">
+            <% if license_expiry_time <= 0 -%>
+                <div class="title"><%= l.string("LICENSE_EXPIRED_TITLE") -%></div>
+            <% else -%>
+                <div class="title"><%= l.string("LICENSE_ABOUT_EXPIRE_TITLE", [license_expiry_time]) -%></div>
+            <% end -%>
+            <div class="suggestion"><%= l.string("LICENSE_ABOUT_EXPIRE_SUGGESTION") -%></div>
+            <button class="primary left submit close_modalbox_control" onclick="Modalbox.hide();"><span><%= l.string("LICENSE_ABOUT_EXPIRE_BUTTON_REMIND_LATER") -%></span></button>
+            <div style="display:none">
+                <%= form_tag(dismiss_license_expiry_warning_path, :method => 'POST', :onsubmit => "return AjaxForm.jquery_ajax_submit(this, AjaxForm.NonRedirectingPopupHandler);") -%>
+                    <%= submit_button(l.string("LICENSE_DO_NOT_SHOW_ME_AGAIN"), :class => 'primary finish') %>
+                <%= end_form_tag -%>
+            </div>
+        </div>
+    </div>
+    <script>
+        Util.on_load(function() {
+            Modalbox.show(jQuery('.license_about_to_expire.content')[0], {overlayClose: false, title: '<%= l.string("LICENSE_ABOUT_EXPIRE_POPUP_TITLE") %>'});
+        });
+    </script>
+<% end -%>
+  <% end %>
+</div>
+<div class="back_to_top" title="Scroll to Top">Top</div>
+</div>
+    </div>
+
+    <div id='body_content'>
+        <div class="messaging_wrapper" id="messaging_wrapper">
+            <%= flash_message_pane_start("message_pane", false) %>
+<% key = @flash_message || params[:fm] || :notice
+   if flash = load_flash_message(key) -%>
+    <%
+       help_link = @flash_help_link.nil? ? "" : " #{@flash_help_link}"
+       complete_message = "#{h(flash.to_s)}#{help_link}"
+    %>
+    <p class="<%= flash.flashClass() -%>"><%= complete_message -%></p>
+<% end -%>
+<%= flash_message_pane_end %>
+
+            <% scope = {}; -%><% if @config_file_conflict -%>
+    <div id="config_save_actions" class="flash">
+        <button id="reload_config" class="reload_config primary"><%=l.string("RELOAD")-%></button>
+        <label class="inline"><%=l.string("REFRESH_CONFIG")%></label>
+    </div>
+    <script type="text/javascript">
+        Util.on_load(function() {
+           jQuery("#reload_config").click(function() {
+               var location = "<%= request.referer -%>";
+               if (location.endsWith("#")) {
+                   location = location.substring(0, location.length - 1);
+               }
+               window.location.href = location;
+           });
+        });
+    </script>
+<% end -%>
+        </div>
+
+        <div id="pause_info_and_controls">
+            <% scope = {:pause_info => @pause_info, :pipeline_name => @pipeline.name()}; -%><% _scope = {:pause_info => scope[:pause_info], :pipeline_name => scope[:pipeline_name]}; -%><% if _scope[:pause_info].isPaused() %>
+    <form action="<%= unpause_pipeline_path(:pipeline_name => _scope[:pipeline_name]) -%>" method="post" onsubmit="PipelineOperations.onUnPause(this, '<%= _scope[:pipeline_name] -%>', '<%= unpause_pipeline_path(_scope[:pipeline_name]) -%>'); return false;">
+        <div class='operate unpause_wrapper'>
+            <%= submit_button("Unpause", :type=> "image", :class => 'primary', :id => "unpause-#{_scope[:pipeline_name]}") %>
+        </div>
+    </form>
+<% else
+    _scope[:pause_info_id] = "pause-info-#{_scope[:pipeline_name]}"
+    _scope[:pause_onclick] = "Modalbox.show($(\"#{_scope[:pause_info_id]}\"),{title: \"Pause pipeline: #{_scope[:pipeline_name]} \",overlayClose:false})"
+-%>
+    <div class='operate pause_wrapper'>
+        <%= submit_button("Pause", {:type=> "image", :id => "confirm-pause-#{_scope[:pipeline_name]}", :onclick => "#{_scope[:pause_onclick]}"}) %>
+    </div>
+    <div id="<%= _scope[:pause_info_id] %>" style="display:none">
+        <form action="<%= pause_pipeline_path(:pipeline_name => _scope[:pipeline_name]) -%>" method="post" onsubmit="PipelineOperations.onPause(this, '<%= _scope[:pipeline_name] -%>', '<%= pause_pipeline_path(_scope[:pipeline_name]) -%>'); return false;">
+            <div class="sub_tab_container">
+                <div class='pause_reason'>
+                    Specify a reason for pausing schedule on pipeline '<%= _scope[:pipeline_name] %>': <input type="text" name="pauseCause" maxlength="255"/>
+                </div>
+            </div>
+            <div class="actions">
+                <%= submit_button("Ok", :class=> "primary", :id => "pause-#{_scope[:pipeline_name]}") %>
+                <%= submit_button("Close", :onclick => "Modalbox.hide()", :type => "button") %>
+            </div>
+        </form>
+    </div>
+<% end -%>
+<% _scope = {:pause_info => scope[:pause_info]}; -%><% if _scope[:pause_info].isPaused() %>
+    <span class="pause_description paused_by">Paused by <%= _scope[:pause_info].getPauseBy() %> </span>
+    <span class="pause_description pause_message">(<%= h(_scope[:pause_info].getPauseCause()) %>)</span>
+<% end %>
+        </div>
+
+        <div class="page_header">
+            <h1 class="entity_title">
+                <%= link_to l.string("ADMINISTRATION"), pipeline_groups_path -%>
+            </h1>
+        </div>
+
+        <%= yield %>
+    </div>
+
+    <div id='footer'>
+        <ul class="copyright" onclick="dashboard_periodical_executer.stop();">
+    <li>Copyright &copy; 2013 <a href="http://www.thoughtworks.com/products" target='blank'>ThoughtWorks, Inc.</a></li>
+    <li class="last"><%=l.string("GO_VERSION")-%>: <%=version%></li>
+</ul>
+<ul class="links">
+    <li><%=link_to("(cc) " +  l.string("CCTRAY_FEED"), url_for_path('cctray.xml'))%></li>
+    <li><%=link_to(l.string("SERVER_DETAILS"), url_for_path('about'))%></li>
+    <li><a target="_blank" href="http://support.thoughtworks.com/categories/20002778-go-community-support"><%=l.string("COMMUNITY")%></a></li>
+    <li><a target="_blank" href="http://www.thoughtworks.com/products/support"><%=l.string("SUPPORT")%></a></li>
+    <li class="last"><%=link_to(l.string("HELP_SMALL"), url_for_path('help/index.html'), :target => "_blank")%></li>
+</ul>
+
+    </div>
+</div>
+</body>
+
+<script type="text/javascript">
+    AjaxRefreshers.addRefresher(new AjaxRefresher("<%= pause_info_refresh_path(:pipeline_name => @pipeline.name()) -%>"), true);
+</script>
+</html>
+

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+    <xsd:annotation>
+        <xsd:documentation xml:lang="en">
+            Configuration schema for Go. Copyright (c) 2013 ThoughtWorks, Inc.
+            www.thoughtworks.com. All rights reserved.
+        </xsd:documentation>
+    </xsd:annotation>
+    <xsd:element name="exec" nillable="false">
+      <xsd:complexType>
+   	  <xsd:sequence>
+      		<xsd:element name="arg" type="xsd:string" maxOccurs="unbounded" minOccurs="0"/>
+	  </xsd:sequence>
+          <xsd:attribute name="command" use="required">
+            <xsd:simpleType>
+                    <xsd:restriction base="xsd:string">
+                        <xsd:minLength value="1"/>
+                        <xsd:whiteSpace value="collapse"/>
+                    </xsd:restriction>
+                </xsd:simpleType>
+            </xsd:attribute>
+      </xsd:complexType>
+    </xsd:element>
+</xsd:schema>
+

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="69">
+  <server artifactsdir="artifacts" commandRepositoryLocation="default" serverId="556261c7-203e-4dc5-bdac-b09f772eebab" />
+  <environments>
+    <environment name="cloud2" />
+    <environment name="cloud1" />
+  </environments>
+  <agents>
+    <agent hostname="0da3e7ebb3d4" ipaddress="172.17.0.2" uuid="7cb09a14-141f-4084-a046-9713698d20e3" />
+  </agents>
+</cruise>
+

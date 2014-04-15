@@ -1,0 +1,2 @@
+Oauth2::Provider::Configuration.ssl_base_url = proc { Spring.bean('cruise_config_service'.camelize(:lower)).getCurrentConfig.server.getSecureSiteUrl.getUrl }
+Oauth2::Provider::Configuration.ssl_not_configured_message = "Please set the secureSiteURL attribute in the configuration file."

@@ -1,0 +1,5 @@
+ALTER TABLE materials ADD COLUMN domain VARCHAR_IGNORECASE(255);
+
+--//@UNDO
+
+ALTER TABLE materials DROP COLUMN domain;

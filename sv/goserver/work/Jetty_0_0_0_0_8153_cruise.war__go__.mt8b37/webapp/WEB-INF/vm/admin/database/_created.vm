@@ -1,0 +1,6 @@
+<html>
+<body>
+<h1>Database Backup Completed</h1>
+<p>The database backup has been completed. You can download it from <a class="artifact" href='$req.getContextPath()$location'>$req.getContextPath()$location</a></p>
+</body>
+</html>

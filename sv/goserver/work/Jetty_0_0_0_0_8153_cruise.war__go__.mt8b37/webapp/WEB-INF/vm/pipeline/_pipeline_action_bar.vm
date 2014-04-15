@@ -1,0 +1,10 @@
+<div class="action-bar" id="pipeline-action-bar">
+    <a href="javascript:void(0)" class="collapse-all" title="Collapse all pipelines panel"
+       onclick="pipelinePage.collapseAllStagePanels()">
+        collapse all
+    </a>
+    <a href="javascript:void(0)" class="expand-all" title="Expand all pipelines panel"
+       onclick="pipelinePage.expandAllStagePanels()">
+        expand all
+    </a>
+</div>

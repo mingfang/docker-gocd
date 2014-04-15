@@ -1,0 +1,210 @@
+<%- @view_title = "Administration" -%>
+<div class="andare">
+    <div id="package-repositories" class="layout admin-entity">
+        <div class="navigation">
+            <% scope = {:package_id => params[:package_id], :package_repositories => @package_repositories, :package_to_pipeline_map => @package_to_pipeline_map, :current_repo => @package_repositories.find(params[:repo_id]).getName()}; -%><%- new_repo_class = (scope[:current_repo] == nil) ? "selected" : "" %>
+<%= link_to content_tag(:span, l.string("ADD_NEW_REPOSITORY")), package_repositories_new_path(), :class => ['add ', new_repo_class] %>
+<%- if scope[:package_repositories].empty? %>
+    <p id="no-items">No repository found.</p>
+<%- else %>
+
+    <input type="text" class="search" placeholder='Search for Repository or Package'/>
+
+    <p style="display: none" class="no-items">No repository found.</p>
+
+    <ul class="repositories treenav accordion">
+        <%- isCurrent = false
+            scope[:package_repositories].each do |repo|
+              if scope[:current_repo] == repo.getName()
+                isCurrent = true
+              end
+        %>
+            <li class="<%= isCurrent ? (scope[:package_id] ? 'grey_selected' : 'selected') : '' %>" title="<%= repo.getName() -%>">
+                <span class="handle"></span>
+
+                <div class="entity">
+                    <%= link_to repo.getName(), package_repositories_edit_path(:id => repo.getId()) -%>
+                    <% form_for :repo, repo, :url => package_repositories_delete_path(:id => repo.getId()), :html => {:id => "delete_repository_"+repo.getId, :method => :delete} do |f| %>
+                        <% if @cruise_config.canDeletePackageRepository(repo) %>
+                            <%= md5_field %>
+                            <button title='<%= l.string("DELETE_REPOSITORY") %>' type="button" class="remove" id="button_for_repository_delete_from_tree_<%= repo.getId() %>"></button>
+                            <% _scope = {:button_container => "delete_repository_#{repo.getId()}", :button_id => "button_for_repository_delete_from_tree_#{repo.getId()}", :message => "You are about to delete repository <span style='font-weight:bold'>#{repo.getName()}</span>", :on_confirmation_js => "$('#{"delete_repository_#{repo.getId()}"}').submit()"}; -%><script type="text/javascript">
+    <%- button_container = _scope[:button_container] -%>
+    <%- button_id = _scope[:button_id] -%>
+    <%- button_selector =  button_container==nil ? button_id : button_container+' #'+button_id -%>
+    <%- prompt_selector =  button_container==nil ? button_id +' #warning_prompt' : button_container +' #warning_prompt' -%>
+    <%- message = _scope[:message] -%>
+    <%- on_confirmation_js = _scope[:on_confirmation_js] -%>
+    jQuery(Util.escapeDotsFromId('<%=button_selector-%>')).click(function() {
+        Modalbox.show(jQuery(Util.escapeDotsFromId('<%=prompt_selector-%>'))[0], {overlayClose: false, title: '<%= l.string("CONFIRM_DELETION") %>'});
+    });
+</script>
+<div id="warning_prompt" class="warning" style="display:none;">
+    <div class="ui-dialog-content">
+        <p><%=message-%></p>
+    </div>
+    <div class="form_buttons actions">
+        <%= submit_button(l.string("PROCEED"), :class=> "primary", :onclick => on_confirmation_js ) %>
+        <%= submit_button(l.string("CANCEL"), :onclick => "Modalbox.hide()", :type => "button") %>
+    </div>
+</div>
+                        <% else %>
+                            <button type="button" title="<%= l.string('CANNOT_DELETE_REPOSITORY') %>" class="remove" id="delete_repository_button_<%= repo.getId() %>" disabled="disabled"></button>
+                        <% end %>
+                    <% end %>
+                </div>
+
+                <ul class="packages">
+                    <%- if repo.getPackages().empty? %>
+                        <li class="empty-node"><span>No packages found</span></li>
+                    <%- else %>
+                        <% repo.getPackages().each do |pkg| %>
+                            <li title="<%= pkg.getName() -%>" class="<%= pkg.getId() == scope[:package_id] ? 'selected' :'' %>">
+                                <div class="entity">
+                                    <%= link_to pkg.getName(), package_definitions_show_with_repository_list_path(:repo_id => repo.getId(), :package_id => pkg.getId()) -%>
+                                    <% form_for :pkg, pkg, :url => package_definition_delete_path(:repo_id => repo.getId(), :package_id => pkg.getId()), :html => {:id => "delete_package_"+pkg.getId, :method => :delete} do |f| %>
+
+                                        <% if scope[:package_to_pipeline_map].get(pkg.getId()) == nil %>
+                                            <%= md5_field %>
+                                            <span id="package_delete_from_tree_<%= pkg.getId() %>">
+                                        <button title='<%= l.string("DELETE_PACKAGE_TITLE") -%>' type="button" class="remove" id="delete_button_from_tree_<%= pkg.getId() %>"></button>
+                                                <% _scope = {:button_container => "package_delete_from_tree_#{pkg.getId()}", :button_id => "delete_button_from_tree_#{pkg.getId()}", :message => "You are about to delete package <span style='font-weight:bold'>#{pkg.getName()}</span>", :on_confirmation_js => "$('#{"delete_package_#{pkg.getId()}"}').submit()"}; -%><script type="text/javascript">
+    <%- button_container = _scope[:button_container] -%>
+    <%- button_id = _scope[:button_id] -%>
+    <%- button_selector =  button_container==nil ? button_id : button_container+' #'+button_id -%>
+    <%- prompt_selector =  button_container==nil ? button_id +' #warning_prompt' : button_container +' #warning_prompt' -%>
+    <%- message = _scope[:message] -%>
+    <%- on_confirmation_js = _scope[:on_confirmation_js] -%>
+    jQuery(Util.escapeDotsFromId('<%=button_selector-%>')).click(function() {
+        Modalbox.show(jQuery(Util.escapeDotsFromId('<%=prompt_selector-%>'))[0], {overlayClose: false, title: '<%= l.string("CONFIRM_DELETION") %>'});
+    });
+</script>
+<div id="warning_prompt" class="warning" style="display:none;">
+    <div class="ui-dialog-content">
+        <p><%=message-%></p>
+    </div>
+    <div class="form_buttons actions">
+        <%= submit_button(l.string("PROCEED"), :class=> "primary", :onclick => on_confirmation_js ) %>
+        <%= submit_button(l.string("CANCEL"), :onclick => "Modalbox.hide()", :type => "button") %>
+    </div>
+</div>
+                                    </span>
+                                        <% else %>
+                                            <button title='<%= l.string("PACKAGE_USED_IN_PIPELINES") -%>' type="button" class="remove" id="delete_button_<%= pkg.getId() %>" disabled="disabled"></button>
+                                        <% end %>
+                                    <% end %>
+                                </div>
+                            </li>
+                        <% end %>
+                    <% end %>
+                </ul>
+            </li>
+            <%- isCurrent = false %>
+        <% end %>
+    </ul>
+<%- end -%>
+
+<script type="text/javascript">
+    Util.on_load(function(){
+        new CustomTreeView().init();
+        new CustomTreeView().bindTreeSearch(jQuery('.search'));
+    })
+</script>
+        </div>
+        <div class="content">
+            <% if @package_configuration != nil %>
+                <h2> Package Details</h2>
+                <% if @errors && !@errors.empty? %>
+    <div class="form_submit_errors">
+        <div class="errors">
+            <h3><%= l.string("GLOBAL_ERRORS_MESSAGE") -%></h3>
+            <ul>
+                <% @errors.each do |error| %>
+                    <li class="error"><%= h(error.to_s) -%></li>
+                <% end %>
+            </ul>
+        </div>
+    </div>
+<% end %>
+                <div class="form">
+                    <fieldset>
+                        <div class="field">
+                            <%= label_tag "package_name_value", "Package Name" %>
+                            <%= text_field_tag "package_name_value", @package_configuration.name, :disabled => "true", :class => "important" %>
+                        </div>
+                        <%- @package_configuration.properties.each do |property| %>
+                            <div class="field">
+                                <%= label_tag "package_#{property.name}_value", property.display_name %>
+                                <%= text_field_tag "package_#{property.name}_value", property.value, :disabled => "true" %>
+                            </div>
+                        <%- end %>
+                    </fieldset>
+                    <% if @package_to_pipeline_map.get(params[:package_id]) == nil %>
+                        <div class="information"><%=l.string("PACKAGE_NOT_USED_IN_ANY_PIPELINE")-%></div>
+                    <% else %>
+                        <fieldset>
+                            <legend><span><%= l.string("PIPELINES_CURRENTLY_ASSOCIATED_WITH_PACKAGE") -%></span></legend>
+                            <div id="pipelines_used_in">
+                                   <a id="show_pipelines_used_in" href="#"><%=l.string("PACKAGE_USED_IN_PIPELINES_LINK")-%></a>
+                            </div>
+                        </fieldset>
+                    <% end %>
+                </div>
+
+
+                <% if @package_to_pipeline_map.get(params[:package_id]) == nil %>
+                    <% form_for @package_configuration, :url => {:action => "destroy", :repo_id => params[:repo_id], :package_id => params[:package_id]}, :html => {:id => :delete_package_form, :method => :delete} do |f| %>
+                            <%= md5_field %>
+                            <span id="trigger_package_delete_<%=params[:package_id]%>">
+                                 <div class="form_buttons">
+                                     <button type="button" class="submit" title="<%=l.string("DELETE_PACKAGE_TITLE")-%>" id="delete_button_<%=params[:package_id]%>">
+                                         <span><%= l.string("DELETE") -%></span>
+                                     </button>
+                                 </div>
+                                <% scope = {:button_container=> "trigger_package_delete_#{params[:package_id]}", :button_id => "delete_button_#{params[:package_id]}",:message => "You are about to delete package <span style='font-weight:bold'>#{@package_configuration.name}</span>",:on_confirmation_js => "$('delete_package_form').submit()"}; -%><script type="text/javascript">
+    <%- button_container = scope[:button_container] -%>
+    <%- button_id = scope[:button_id] -%>
+    <%- button_selector =  button_container==nil ? button_id : button_container+' #'+button_id -%>
+    <%- prompt_selector =  button_container==nil ? button_id +' #warning_prompt' : button_container +' #warning_prompt' -%>
+    <%- message = scope[:message] -%>
+    <%- on_confirmation_js = scope[:on_confirmation_js] -%>
+    jQuery(Util.escapeDotsFromId('<%=button_selector-%>')).click(function() {
+        Modalbox.show(jQuery(Util.escapeDotsFromId('<%=prompt_selector-%>'))[0], {overlayClose: false, title: '<%= l.string("CONFIRM_DELETION") %>'});
+    });
+</script>
+<div id="warning_prompt" class="warning" style="display:none;">
+    <div class="ui-dialog-content">
+        <p><%=message-%></p>
+    </div>
+    <div class="form_buttons actions">
+        <%= submit_button(l.string("PROCEED"), :class=> "primary", :onclick => on_confirmation_js ) %>
+        <%= submit_button(l.string("CANCEL"), :onclick => "Modalbox.hide()", :type => "button") %>
+    </div>
+</div>
+                            </span>
+                    <% end %>
+                <% else %>
+                    <div class="form_buttons">
+                        <button type="submit" class="submit" id="delete_package" disabled="disabled" title="<%=l.string("PACKAGE_USED_IN_PIPELINES")-%>"><span><%= l.string("DELETE") -%></span></button>
+                    </div>
+                <% end %>
+            <% end %>
+        </div>
+        <% scope = {}; -%><script type="text/javascript">
+    Util.on_load(function() {
+        jQuery(".has_go_tip").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10});
+        jQuery(".has_go_tip_right").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "right"});
+        jQuery(".has_go_tip_left").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "left" });
+        jQuery(".has_go_tip_top").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "top" });
+    });
+</script>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    Util.on_load(function () {
+        var url = '<%= pipelines_used_in_path(:repo_id=>params[:repo_id], :package_id => params[:package_id]) %>';
+        new FetchPipelinesUsingGivenPackage(url, "#show_pipelines_used_in", "#pipelines_used_in").init();
+    });
+</script>

@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.thoughtworks.cruise.domain" default-access="field" default-lazy="true">
+    <class name="com.thoughtworks.cruise.domain.NotificationFilter" table="notificationfilters">
+        <cache usage="read-write"/>
+        <id name="id" column="id">
+            <generator class="identity"/>
+        </id>
+
+        <property name="pipelineName" column="pipeline"/>
+        <property name="stageName" column="stage"/>
+        <property name="event">
+            <type name="org.hibernate.type.EnumType" >
+                <param  name="enumClass">com.thoughtworks.cruise.domain.StageEvent</param>
+                <param  name="type">12</param>
+            </type>
+        </property>
+        <property name="myCheckin"/>
+    </class>
+</hibernate-mapping>

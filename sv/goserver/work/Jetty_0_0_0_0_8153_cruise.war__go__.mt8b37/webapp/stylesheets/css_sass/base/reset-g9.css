@@ -1,0 +1,12 @@
+.andare textarea, .andare input[type="text"], .andare input[type="password"], .andare input[type="datetime"], .andare input[type="datetime-local"], .andare input[type="date"], .andare input[type="month"], .andare input[type="time"], .andare input[type="week"], .andare input[type="number"], .andare input[type="email"], .andare input[type="url"], .andare input[type="search"], .andare input[type="tel"], .andare input[type="color"] {
+  box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
+  -o-box-shadow: none;
+  -ms-box-shadow: none;
+  width: auto; }
+.andare .fieldset, .andare fieldset {
+  clear: none;
+  padding: 0px; }
+.andare .form_buttons {
+  margin: 0px; }

@@ -1,0 +1,48 @@
+            <div id="footer">
+                <ul class="copyright" onclick="dashboard_periodical_executer.stop();">
+                    <li>Copyright &copy; 2013 <a href="http://www.thoughtworks.com/products" target='blank'>ThoughtWorks, Inc.</a></li>
+                    <li class="last">$l.localize("GO_VERSION"): #include("admin/admin_version.txt.vm")</li>
+                </ul>
+                <ul class="links">
+                    <li><a target="_blank" href="$req.getContextPath()/cctray.xml">(cc) $l.localize("CCTRAY_FEED")</a></li>
+                    <li><a href="$req.getContextPath()/about">$l.localize("SERVER_DETAILS")</a></li>
+                    <li><a target="_blank" href="http://support.thoughtworks.com/categories/20002778-go-community-support">$l.localize("COMMUNITY")</a></li>
+                    <li><a target="_blank" href="http://www.thoughtworks.com/products/support">$l.localize("SUPPORT")</a></li>
+                    <li class="last"><a href="$req.getContextPath()/help/index.html" target="_blank">$l.localize("HELP_SMALL")</a></li>
+                </ul>
+                <ul id="footer-links">
+                </ul>
+                <div class="clear"></div>
+            </div>
+        </div>
+        <!-- end content -->
+    
+    </div></div></div><!-- end of body_bg, body_hightlight, body_wrapper-->
+            <div class="back_to_top" title="Scroll to Top">Top</div>
+    </body>
+    <script type="text/javascript">
+        restoreSidebarStatus();
+
+        if(FirebugDetector){
+            FirebugDetector.check();
+            if(window.dashboard_periodical_executer){
+                dashboard_periodical_executer.register(FirebugDetector);
+            }
+        }
+
+        new AjaxRefresher("$req.getContextPath()/server/messages.json", "$req.getContextPath()/auth/login", {executeImmediately: true});
+        
+        #if($global_error_message && $global_error_message != "")
+            FlashMessageLauncher.warn("$esc.javascript("$global_error_message")", null, true);
+        #end
+
+        if(Prototype.Browser.IE){
+            $$('.rounded-corner-for-body').each(function(container){
+                $(container);
+                if(container.getWidth() % 2 == 1){
+                    container.setStyle({width: container.getWidth() + 1 + 'px'});
+                }
+            })
+        }
+    </script>
+</html>

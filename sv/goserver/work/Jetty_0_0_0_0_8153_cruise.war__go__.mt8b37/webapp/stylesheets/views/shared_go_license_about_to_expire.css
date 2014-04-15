@@ -1,0 +1,27 @@
+/**
+ * shared_go_license_about_to_expire.css
+ */
+
+
+.license_about_to_expire {
+    font-size: 12px;
+    padding: 10px;
+}
+
+.license_about_to_expire .title {
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.license_about_to_expire .suggestion {
+    padding: 10px 0;
+}
+
+.license_about_to_expire form {
+    display: inline;
+}
+
+.license_about_to_expire form {
+    display: inline;
+}
+

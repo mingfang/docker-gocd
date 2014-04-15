@@ -1,0 +1,43 @@
+/*
+ * IE_Hacks.css
+  * This file contains IE style hacks for the css, which have been extracted from other css files.
+  * CSS errors are caused if the these styles do not appear in the end of a file.
+  * This file is added separately.
+  */
+
+/*
+ *FROM WIZARD_STEPS.CSS
+*/
+
+/*
+ Float Closures
+*/
+
+.steps_wrapper:after {
+    clear: both;
+    content: '.';
+    display: block;
+    height: 0;
+    visibility: hidden;
+}
+
+<!--[if IE7]>
+*+html .steps_wrapper {
+    display: inline-block;
+    zoom: 1;
+}
+<![endif]-->
+
+<!--[if IE]>
+<style type="text/css">
+.steps_wrapper {
+    zoom: 1;
+    display: block;
+    height: 1%;
+}
+
+</style>
+<![endif]-->
+
+
+

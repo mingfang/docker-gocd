@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ArtifactPropertiesGenerator">
+
+    <resultMap id="select-artifactPropertiesGenerator" groupBy="id" class="com.thoughtworks.cruise.config.ArtifactPropertiesGenerator">
+        <result property="id" column="id" />
+        <result property="jobId" column="jobId" />
+        <result property="name" column="name"   />
+        <result property="src" column="src"   />
+        <result property="xpath" column="xpath" />
+        <result property="regex" column="regex" />
+        <result property="generatorType" column="generatorType"/>
+    </resultMap>
+
+    <select id="select-generators" resultMap="select-artifactPropertiesGenerator">
+        SELECT *
+        FROM artifactPropertiesGenerator
+        WHERE jobId = #jobId#
+        ORDER BY id ASC
+    </select>
+
+    <parameterMap id="insert-artifactPropertiesGenerator-param" class="com.thoughtworks.cruise.config.ArtifactPropertiesGenerator">
+        <parameter property="jobId"/>
+        <parameter property="name"   />
+        <parameter property="src"   />
+        <parameter property="xpath" />
+        <parameter property="regex" />
+        <parameter property="generatorType"/>
+    </parameterMap>
+
+    <insert id="insertArtifactPropertiesGenerator" parameterMap="insert-artifactPropertiesGenerator-param">
+        INSERT INTO artifactPropertiesGenerator (jobId, name, src, xpath, regex, generatorType) VALUES (?, ?, ?, ?, ?, ?)
+        <selectKey resultClass="long" keyProperty="id" type="post">
+            CALL IDENTITY();
+        </selectKey>
+    </insert>
+
+    <insert id="insertArtifactPropertiesGenerator-postgresql" parameterMap="insert-artifactPropertiesGenerator-param">
+        INSERT INTO artifactPropertiesGenerator (jobId, name, src, xpath, regex, generatorType) VALUES (?, ?, ?, ?, ?, ?)
+        <selectKey resultClass="long" keyProperty="id" type="post">
+            SELECT lastval();
+        </selectKey>
+    </insert>
+
+</sqlMap>

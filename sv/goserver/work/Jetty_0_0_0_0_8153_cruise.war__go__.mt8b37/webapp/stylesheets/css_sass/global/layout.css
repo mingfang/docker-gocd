@@ -1,0 +1,92 @@
+/*
+ * layout
+ */
+body {
+  background-color: #333;
+  color: #333;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px; }
+
+#body_content {
+  padding-top: 91px;
+  background-color: #ffffff; }
+
+#environments h2.entity_title, #pipelines h2.entity_title {
+  border: 0 none;
+  margin-bottom: 0; }
+#environments .content_wrapper_inner, #pipelines .content_wrapper_inner {
+  border-bottom: 1px dotted #888888;
+  margin-left: 15px;
+  margin-right: 15px;
+  padding-bottom: 5px;
+  /* compensate for bottom margin of pipeline */
+  padding-top: 10px;
+  padding-left: 0;
+  padding-right: 0; }
+#environments #body_content, #pipelines #body_content {
+  background-color: #eeeeee; }
+
+.content_wrapper_inner {
+  border: 0;
+  padding: 15px; }
+
+/*
+ * Footer
+ */
+/*todo: refactoring of below classes*/
+#footer {
+  background-color: transparent;
+  text-align: right;
+  color: #bbbbbb !important;
+  margin: 0 15px;
+  padding: 10px 0 35px 0;
+  border-top: 1px solid #333333; }
+  #footer a {
+    color: #fff; }
+  #footer ul li {
+    display: inline;
+    padding: 0 0.5em;
+    color: #bbbbbb !important;
+    border-right: 1px dotted #cccccc; }
+  #footer ul li.last {
+    border: 0 none !important; }
+  #footer ul li, #footer ul li a, #footer ul li span {
+    font-size: 11px !important; }
+  #footer .copyright {
+    float: left; }
+  #footer ul.links {
+    float: right; }
+  #footer #copyright {
+    font-size: 0.9em;
+    clear: both;
+    color: #1f2314;
+    width: 20em;
+    padding-left: 2em;
+    float: left; }
+    #footer #copyright a, #footer #copyright a:visited {
+      color: #1f2314; }
+
+.form_submit_errors .errors {
+  background: url(../../images/g9/icons/icon_error_16.png) no-repeat scroll 0 0 #f8d1d8;
+  font-size: 12px;
+  border-radius: 3px;
+  overflow: auto;
+  -moz-border-radius: 3px;
+  -webkit-border-radius: 3px;
+  background-position: 10px 9px !important;
+  background-repeat: no-repeat;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: #333333;
+  margin: 10px 0px 10px 0px;
+  padding: 10px 10px 10px 36px; }
+
+.form_submit_errors .errors h3 {
+  font-size: 12px;
+  font-weight: bold; }
+
+.errors ul {
+  margin-left: 15px; }
+
+.errors ul li {
+  float: none;
+  list-style: disc; }

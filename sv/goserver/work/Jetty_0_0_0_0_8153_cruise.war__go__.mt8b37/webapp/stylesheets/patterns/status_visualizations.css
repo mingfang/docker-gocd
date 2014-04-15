@@ -1,0 +1,102 @@
+/**
+ * Status Visualizations.css
+ *
+ * This file contains things like status colors (pass, fail, building, etc) and how shared ways to show these pieces 
+**/
+ 
+
+/**
+ * TABLE OF CONTENTS
+ *
+ * =STATUS_TREATMENTS
+ * ==TABLE_OVERRIDES
+ * =COLOR_CODE
+**/
+
+
+/**
+ * =STATUS_TREATMENTS
+**/
+.Passed{
+  background-image: url(../../images/g9/backgrounds/bg_status_gradient.png);
+  background-repeat: repeat-x;
+  background-color: #78C42D;
+  background-position: bottom left;
+}
+
+.Failed{
+  background-image: url(../../images/g9/backgrounds/bg_status_gradient.png);
+  background-repeat: repeat-x;
+  background-color: #FA2D2D;
+  background-position: bottom left;
+}
+
+.Failing {
+  background-image: url(../../images/g9/backgrounds/bg_status_diagonal.png);
+  background-repeat: repeat-x;
+  background-color: #FA2D2D;
+  background-position: bottom left;
+}
+.Unknown{
+  background: url(../../images/g9/backgrounds/bg_state_unknown.png) no-repeat right;
+}
+
+.Building,
+.Active{
+  background-image: url(../../images/g9/backgrounds/bg_status_diagonal.png);
+  background-repeat: repeat-x;
+  background-color: #FFC11B;
+  background-position: bottom left;
+}
+
+.Cancelled {
+  background-image: url(../../images/g9/backgrounds/bg_status_diagonal.png);
+  background-repeat: repeat-x;
+  background-color: #FFC11B;
+  background-position: bottom left;
+  text-align: center;
+}
+
+
+/**
+ * ==TABLE OVERRIDES
+**/
+tr.Cancelled td {
+  text-align: left;
+}
+
+
+/**
+ * =COLOR_CODE
+ */
+.color_code {
+    width: 1em;
+    height: 1em;
+    margin-right: .5em;
+    float: left;
+    overflow: hidden;
+}
+.color_code_small {
+    float:left;
+    height:12px;
+    width:12px;
+    margin-right:5px;
+    margin-top:0;
+    overflow:hidden;
+}
+*+html .color_code_small{
+    width: 1em;
+    height: 1em;
+}
+*+html .color_code_small img{
+    position: relative;
+    top: -2px;
+    left: 0
+}
+.color_code_stage {
+    width: 36px;
+    height: 12px;
+    margin-right: 5px;
+    float: left;
+    overflow: visible;
+}

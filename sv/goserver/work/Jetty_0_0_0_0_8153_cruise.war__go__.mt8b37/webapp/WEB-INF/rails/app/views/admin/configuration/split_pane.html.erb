@@ -1,0 +1,64 @@
+<div class="sub_tab_container_content">
+    <div id="tab-content-of-source-xml">
+                <% scope = {:go_config => @go_config}; -%><%
+   go_config = scope[:go_config]
+-%>
+
+<div class="heading">
+    <h2><%= l.string("CONFIGURATION_FILE") -%></h2>
+    <span class="wbrSensitive"><%= go_config.location -%></span>
+    <span class='label'><%= l.string("CONFIG_FILE_PATH") -%></span>
+</div>
+                <% if @errors && !@errors.empty? %>
+    <div class="form_submit_errors">
+        <div class="errors">
+            <h3><%= l.string("GLOBAL_ERRORS_MESSAGE") -%></h3>
+            <ul>
+                <% @errors.each do |error| %>
+                    <li class="error"><%= h(error.to_s) -%></li>
+                <% end %>
+            </ul>
+        </div>
+    </div>
+<% end %>
+                <div id="admin-holder-for-admin-config-source-xml">
+                    <div class='conflicted_content'>
+                        <h3><%= l.string("YOUR_CHANGES") %></h3>
+                        <pre class="wrap_pre"><%= html_escape @conflicted_config.content -%></pre>
+                    </div>
+                    <div class='current_content'>
+                        <% scope = {:go_config => @go_config, :go_config_revision => @go_config_revision}; -%><%
+   go_config = scope[:go_config]
+   go_config_revision = scope[:go_config_revision]
+   time = l.string("UNKNOWN")
+   config_modified_by = l.string("UNKNOWN")
+   if go_config_revision
+       config_modified_time = go_config_revision.getTime().to_s
+       time = "#{time_ago_in_words(Time.parse(config_modified_time))} #{l.string('AGO')}"
+       config_modified_by = go_config_revision.getUsername()
+   end
+-%>
+<% form_for :go_config, go_config, :url => config_update_path, :html => {:id => "config_editor_form", :method => :put} do |form| %>
+    <div class='form_heading'>
+        <div class="buttons-group">
+            <div class="config_change_timestamp" title="<%= "#{l.string('LAST_MODIFIED')}: #{(time)} #{l.string('BY')} #{(config_modified_by)}" -%>"><%= "#{l.string('LAST_MODIFIED')}: #{(time)} #{l.string('BY')} #{(config_modified_by)}" -%></div>
+            <%= link_to(l.string("CANCEL"), config_view_path, :class => "link_as_button", :id => "cancel_edit") %>
+            <%= form.submit(l.string("SAVE"), :class => "link_as_button primary" , :id => "save_config", :disabled => 'disabled') -%>
+        </div>
+    </div>
+    <div id="content_area">
+        <%= form.text_area html_escape(:content), :class => "code" ,:id => "content", :spellcheck => "false" %>
+        <%= form.hidden_field :md5 %>
+    </div>
+<% end %>
+
+<script type="text/javascript">
+    jQuery(document).ready(function() {
+       jQuery("input#save_config").removeAttr("disabled");
+    });
+</script>
+                    </div>
+                </div>
+
+            </div>
+</div>

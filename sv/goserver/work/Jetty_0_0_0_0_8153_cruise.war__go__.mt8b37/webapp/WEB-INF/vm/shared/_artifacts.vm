@@ -1,0 +1,7 @@
+#parse('shared/_artifact_entry.vm')
+
+<script type="text/javascript">
+    try{
+        BuildDetail.collapseAll();
+    } catch(e) {}
+</script>

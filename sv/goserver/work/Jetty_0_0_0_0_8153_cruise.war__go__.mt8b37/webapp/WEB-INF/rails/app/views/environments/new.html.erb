@@ -1,0 +1,347 @@
+<% @view_title = "Add Environment" -%>
+<% @page_header = '<h1 id="page-title" class="entity_title">Add Environment</h1>' -%>
+
+<% scope = {:environment => @environment, :available_pipelines => @available_pipelines,  :unavailable_pipelines => @unavailable_pipelines, :agents => @agents, :form_action => environment_create_path, :form_method => "post"}; -%><span id="add_error_message"></span>
+<div class="environment">
+    <%= content_wrapper_tag %>
+    <%- form_for(:environment, scope[:environment], :url => scope[:form_action], :html => {:method => scope[:form_method]}) do |f| %>
+    <div id="add_new_environment">
+        <div class="wizard_form">
+
+
+            <div class="steps_wrapper sub_tabs_container">
+                <ul class="tabs">
+                    <li id="step1_link" class="current_tab">
+                        <a href="#">
+                            <div><%= l.string("WIZARD_STEP", [1]) -%></div><%= l.string("NAME") -%></a>
+                        <a href="#" class="tab_button_body_match_text">env-name</a></li>
+                    <li id="step2_link" class="subsequent_tab">
+                        <a href="#">
+                            <div><%= l.string("WIZARD_STEP", [2]) -%></div><%= l.string("ADD_PIPELINES") -%></a>
+                        <a href="#" class="tab_button_body_match_text">env-pipelines</a></li>
+                    <li id="step3_link" class="subsequent_tab">
+                        <a href="#">
+                            <div><%= l.string("WIZARD_STEP", [3]) -%></div><%= l.string("ADD_AGENTS") -%></a>
+                        <a href="#" class="tab_button_body_match_text">env-agents</a></li>
+                    <li id="step4_link" class="subsequent_tab"><a href="#">
+                        <div><%= l.string("WIZARD_STEP", [4]) -%></div><%= l.string("ADD_ENV_VARIABLES") -%></a>
+                        <a href="#" class="tab_button_body_match_text">env-vars</a></li>
+                </ul>
+            </div>
+
+            <div class="steps_panes panes sub_tab_container_content">
+                <!-- Name tab -->
+                <div id="tab-content-of-env-name">
+                   <h2 class="section_title"><%= l.string('Environment Name') -%></h2>
+                    <div class="form_content">
+                        <div class="environment_name">
+                            <%= f.text_field :name, :id => "environment_name", :maxLength => 255, :class => "width-medium" -%>
+                        </div>
+                    </div>
+                    <div class="form_buttons actions">
+                        <button class="left submit cancel_button"><span><%= l.string('CANCEL') -%></span></button>
+                        <button id="next_to_name" class="right primary next submit"><span><%= l.string('NEXT_BUTTON') -%></span></button>
+                        <%= submit_button("Finish", :class => 'primary finish') %>
+                    </div>
+                </div>
+
+                <!-- Add pipelines tab -->
+                <div id="tab-content-of-env-pipelines">
+                   <h2 class="section_title"><%= l.string('PIPELINES_TO_ADD') -%></h2>
+                    <% _scope = {:environment => scope[:environment], :available_pipelines => scope[:available_pipelines], :unavailable_pipelines => scope[:unavailable_pipelines]}; -%><div id="pipelines_form" class="form_content hidereveal_collapsed" >
+        <% if (_scope[:available_pipelines].empty?)  && (_scope[:unavailable_pipelines].empty?) %>
+                <%= l.string("NO_PIPELINES") %>
+        <% else %>
+
+          <div class="pipeline_list">
+            <% if _scope[:available_pipelines].empty? %>
+                <div class="information"><%= l.string("NO_AVAILABLE_PIPELINES") -%></div>
+            <%else%>
+                <span class="available_pipelines"><%= l.string("SHOW_AVAILABLE_PIPELINES") -%></span>
+            <%end%>
+            <div class="input">
+                 <% selected_pipeline_names = _scope[:environment].pipelines.map(&:name).map(&:to_s)
+                    _scope[:available_pipelines].each do |available_pipeline| %>
+                           <div class="pipeline_selector">
+                                <%= check_box_tag "environment[pipelines][][name]", available_pipeline.getPipelineName(), available_pipeline.isAssociatedWithEnvironment(_scope[:environment].name.to_s) || selected_pipeline_names.include?(available_pipeline.getPipelineName()),
+                                                  :id => "pipeline_#{available_pipeline.getPipelineName()}"-%>
+                                <label for="pipeline_<%= available_pipeline.getPipelineName() -%>" class="label inline"><%= available_pipeline.getPipelineName() -%></label>
+                            </div>
+                 <% end %>
+            </div>
+
+            <% if !(_scope[:unavailable_pipelines].empty?) %>
+                <a id="show_unavailable_pipelines" class="hidereveal_expander"><%= l.string("SHOW_UNAVAILABLE_PIPELINES") -%></a>
+                <div class="unavailable_pipelines hidereveal_content">
+                     <%  _scope[:unavailable_pipelines].each do |unavailable_pipeline| %>
+                         <label class="label"><%= unavailable_pipeline.getPipelineName() -%> (<%= unavailable_pipeline.getEnvironmentName() -%>)</label>
+                     <% end %>
+                </div>
+            <% end %>
+          </div>
+        <% end %>
+</div>
+
+
+
+<script type="text/javascript">
+    Util.on_load(function() {
+      make_collapsable("pipelines_form");
+    });
+</script>
+
+                    <div class="form_buttons actions">
+                        <button class="left submit cancel_button"><span><%= l.string('CANCEL') -%></span></button>
+                        <button id="next_to_pipelines" class="right primary next submit"><span><%= l.string('NEXT_BUTTON') -%></span></button>
+                        <%= submit_button("Finish", :class => 'primary finish') %>
+                    </div>
+                </div>
+
+                <!-- Add agents tab -->
+                <div id="tab-content-of-env-agents">
+                   <h2 class="section_title"><%= l.string('AGENTS_TO_ADD') -%></h2>
+                    <% _scope = {:environment => scope[:environment], :agents => scope[:agents]}; -%><div class="form_content">
+    <div class="agents_section">
+        <div class="agents_selection_table">
+            <div class="input">
+                <% if _scope[:agents].empty? %>
+                    <%= l.string("NO_AGENTS") %>
+                <% else %>
+                    <% __scope = {:agents => _scope[:agents], :exclude_columns => ["status", "usable_space"], :sortable_columns => false, :show_only_disabled => true, :selector_name => 'environment[agents][][uuid]', :selected => _scope[:environment].agents.map(&:uuid)}; -%><% __scope[:exclude_columns] ||= []
+   __scope[:sortable_columns] = true if __scope[:sortable_columns].nil?
+   __scope[:show_only_disabled] = false if __scope[:show_only_disabled].nil?
+   __scope[:selector_name] ||= 'selected[]'
+   __scope[:selected] ||= params[:selected]
+   __scope[:agents] ||= @agents
+%>
+
+<script type="text/javascript">
+Util.on_load(function() {
+    jQuery("#select_all_agents").live('click',function() {
+        var val = this.checked;
+        jQuery(".agent_select").each(function() {
+            this.checked = val;
+        });
+    });
+
+    jQuery("input.agent_select").live("click", function() {
+        var unchecked_check_boxes = jQuery("input.agent_select:not(:checked)");
+        if(unchecked_check_boxes.length > 0) {
+            jQuery("#select_all_agents").removeAttr("checked");
+        }
+    });
+})
+
+</script>
+
+
+<table id='agent_details' class='agents list_table <%=" sortable_table" if __scope[:sortable_columns]%> selectable_table'>
+    <thead>
+    <tr class='agent_header'>
+        <% if has_operate_permission_for_agents? %>
+            <th class='selector'>
+                <%= check_box_tag 'accept', '', false, {:id => 'select_all_agents', :class => 'agent_select'} -%>
+            </th>
+        <% end -%>
+
+        <% unless __scope[:exclude_columns].include?('hostname') -%>
+            <th class='hostname'><%= column_header("Agent Name",  "hostname", __scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless __scope[:exclude_columns].include?('location') -%>
+            <th class='location'><%= column_header("Sandbox", "location", __scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless __scope[:exclude_columns].include?('operating_system') -%>
+            <th class='operating_system'><%= column_header("OS", "operating_system", __scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless __scope[:exclude_columns].include?('ip_address') -%>
+            <th class='ip_address'><%= column_header("IP Address", "ip_address", __scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless __scope[:exclude_columns].include?('status') -%>
+            <th class='status'><%= column_header("Status", "status", __scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless __scope[:exclude_columns].include?('usable_space') -%>
+            <th class='usable_space'><%= column_header("Free Space", "usable_space", __scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless __scope[:exclude_columns].include?('resources') -%>
+            <th class='resources'><%= column_header("Resources", "resources", __scope[:sortable_columns]) %></th>
+        <% end -%>
+
+        <% unless __scope[:exclude_columns].include?('environments') -%>
+            <th class='environments'><%= column_header("Environments", "environments", __scope[:sortable_columns]) %></th>
+        <% end -%>
+    </tr>
+    </thead>
+    <tbody>
+    <% __scope[:agents].each do |agent_in_agent_table| %>
+        <tr class='agent_instance <%= get_agent_status_class(__scope[:show_only_disabled],agent_in_agent_table.getStatus()) %>' id='<%= agent_in_agent_table.getUuid() %>'>
+            <% agent_uuid = agent_in_agent_table.getUuid()-%>
+            <% if has_operate_permission_for_agents? %>
+                <%= agent_selector(agent_uuid, __scope[:selector_name], __scope[:selected]) %>
+            <% end %>
+            <% unless __scope[:exclude_columns].include?('hostname') -%>
+
+                <%hostname = agent_in_agent_table.getHostname() -%>
+                <% if agent_in_agent_table.getStatus().isRegistered() -%>
+                    <%span_text = link_to(hostname, agent_detail_path(:uuid => agent_uuid)) -%>
+                 <% else -%>
+                    <%span_text = hostname -%>
+                <% end -%>
+                <td class='hostname' title='<%= hostname %>'>
+                    <span class='agent_hostname'><%= span_text %></span>
+                </td>
+
+            <% end -%>
+
+            <% unless __scope[:exclude_columns].include?('location') -%>
+                <% display_value = smart_word_breaker(agent_in_agent_table.getLocation())%>
+                <%= cell_with_title( display_value, 'location', agent_in_agent_table.getLocation()) %>
+            <% end -%>
+
+            <% unless __scope[:exclude_columns].include?('operating_system') -%>
+                <%= cell_with_title( agent_in_agent_table.getOperatingSystem(), 'operating_system') %>
+            <% end -%>
+
+            <% unless __scope[:exclude_columns].include?('ip_address') -%>
+                <%= cell_with_title( agent_in_agent_table.getIpAddress(), 'ip_address') %>
+            <% end -%>
+
+            <% unless __scope[:exclude_columns].include?('status') -%>
+                <%= agent_status_cell(agent_in_agent_table) %>
+            <% end -%>
+
+            <% unless __scope[:exclude_columns].include?('usable_space') -%>
+                <%= cell_with_title( agent_in_agent_table.freeDiskSpace(), 'usable_space') %>
+            <% end -%>
+
+            <% unless __scope[:exclude_columns].include?('resources') -%>
+                <%= piped_cell(agent_in_agent_table.getResources(), l.string("NO_RESOURCES_SPECIFIED"), "resources") %>
+            <% end -%>
+
+            <% unless __scope[:exclude_columns].include?('environments') -%>
+                <%= piped_cell(agent_in_agent_table.getEnvironments(), l.string("NO_ENVIRONMENTS_SPECIFIED"), "environments") %>
+            <% end -%>
+
+
+        </tr>
+    <% end %>
+    </tbody>
+</table>
+                <% end %>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+                    <div class="form_buttons actions">
+                        <button class="left submit cancel_button"><span><%= l.string('CANCEL') -%></span></button>
+                        <button id="next_to_agents" class="right primary next submit"><span><%= l.string('NEXT_BUTTON') -%></span></button>
+                        <%= submit_button("Finish", :class => 'primary finish') %>
+                    </div>
+                </div>
+
+                <!-- Add env var tab -->
+                <div id="tab-content-of-env-vars">
+                   <h2 class="section_title"><%= l.string("ENV_VAR_TO_ADD") -%></h2>
+                    <% _scope = {:form => f}; -%><div class="form_content">
+    <div class="environment_variables_section popup_form">
+        <textarea id="environment_variables_template" class="template">
+            <%- _scope[:form].fields_for :variables, :index => "" do |var_form| -%>
+                <% __scope = {:var_form => var_form}; -%><%= __scope[:var_form].text_field :name, :class => "form_input environment_variable_name", :omit_id_generation => true -%>
+<span class="equals_sign"><%= l.string("EQUALS_SIGN") -%></span>
+<%= __scope[:var_form].text_field :valueForDisplay, :class => "form_input environment_variable_value", :omit_id_generation => true -%>
+<span class="icon_remove delete_parent"></span>
+<span class="wizard_error_message"></span>
+
+            <%- end -%>
+        </textarea>
+        <ul class="variables">
+            <% _scope[:form].object.variables.each do |variable| -%>
+                <%- _scope[:form].fields_for :variables, variable, :index => "" do |var_form| -%>
+                    <li>
+                        <% __scope = {:var_form => var_form, :variable => variable}; -%><%= __scope[:var_form].text_field :name, :class => "form_input environment_variable_name", :omit_id_generation => true -%>
+<span class="equals_sign"><%= l.string("EQUALS_SIGN") -%></span>
+<%= __scope[:var_form].text_field :valueForDisplay, :class => "form_input environment_variable_value", :omit_id_generation => true -%>
+<span class="icon_remove delete_parent"></span>
+<span class="wizard_error_message"></span>
+
+                    </li>
+                <%- end -%>
+            <%- end -%>
+        </ul>
+        <a class="add_item" id="add_variable"><%= l.string("ADD") -%></a>
+    </div>
+</div>
+<script type="text/javascript">
+    Util.on_load(function() {
+        function setupEnvVarForm(finish_button) {
+            var rowCreator = new EnvironmentVariables.RowCreator(jQuery('#environment_variables_template'), 'li', '.delete_parent');
+            var environmentVariables = new EnvironmentVariables(jQuery('ul.variables'), rowCreator, null, null, null);
+            environmentVariables.addDefaultRow();
+            environmentVariables.registerAddButton(jQuery("#add_variable"));
+            environmentVariables.registerFinishButton(finish_button);
+        }
+
+        var finish_button = jQuery(".finish");
+        setupEnvVarForm(finish_button);
+    });
+</script>
+                    <div class="form_buttons actions">
+                        <button class="left submit cancel_button"><span><%= l.string('CANCEL') -%></span></button>
+                        <%= submit_button("Finish", :class => 'primary finish') %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- end %>
+    <%= end_content_wrapper %>
+</div>
+<script type="text/javascript">
+    Util.on_load(function() {
+        function setupEnvNameForm(finish_button) {
+            var tabs_after_env_name = jQuery('.subsequent_tab');
+            var env_name_field = jQuery("#environment_name");
+            var next_to_name = $("next_to_name");
+            var finish_button = $(finish_button.get(0));
+
+            function fixFurtherActions() {
+                var val = env_name_field.val();
+                if (jQuery.trim(val) === "") {
+                    tabs_after_env_name.addClass("disabled");
+                    Util.disable(finish_button);
+                    Util.disable(next_to_name);
+                } else {
+                    tabs_after_env_name.removeClass("disabled");
+                    Util.enable(finish_button);
+                    Util.enable(next_to_name);
+                }
+            }
+
+            env_name_field.change(fixFurtherActions);
+            env_name_field.blur(fixFurtherActions);
+            env_name_field.mouseup(fixFurtherActions);
+            env_name_field.mousedown(fixFurtherActions);
+            env_name_field.mouseover(fixFurtherActions);
+            env_name_field.mouseout(fixFurtherActions);
+            env_name_field.keyup(fixFurtherActions);
+            env_name_field.click(fixFurtherActions);
+            fixFurtherActions();
+        }
+
+
+       var finish_button = jQuery(".finish");
+        setupEnvNameForm(finish_button);
+
+        var tab_manager = new TabsManager("env-name", 'environment_form', 'new-environment');
+        var adminWizard = new TabsWizard.EnvironmentWizard(tab_manager);
+        adminWizard.wireButtons({next_to_name: "env-pipelines", next_to_pipelines: "env-agents", next_to_agents: "env-vars"});
+        adminWizard.hookupCancel("cancel_button", "<%= environments_path -%>");
+    });
+</script>

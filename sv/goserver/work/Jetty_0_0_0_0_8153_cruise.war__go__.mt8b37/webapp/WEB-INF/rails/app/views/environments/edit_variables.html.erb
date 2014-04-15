@@ -1,0 +1,52 @@
+<%- form_for :environment, @environment, :url => environment_update_path, :html => {:method => :put, :onsubmit => "return AjaxForm.jquery_ajax_submit(this);"} do |f| -%>
+    <%= flash_message_pane_start("env_form_error_box", true) %>
+    <% scope = {:environment => @environment, :form => f}; -%><div class="form_content">
+    <div class="environment_variables_section popup_form">
+        <textarea id="environment_variables_template" class="template">
+            <%- scope[:form].fields_for :variables, :index => "" do |var_form| -%>
+                <% _scope = {:var_form => var_form}; -%><%= _scope[:var_form].text_field :name, :class => "form_input environment_variable_name", :omit_id_generation => true -%>
+<span class="equals_sign"><%= l.string("EQUALS_SIGN") -%></span>
+<%= _scope[:var_form].text_field :valueForDisplay, :class => "form_input environment_variable_value", :omit_id_generation => true -%>
+<span class="icon_remove delete_parent"></span>
+<span class="wizard_error_message"></span>
+
+            <%- end -%>
+        </textarea>
+        <ul class="variables">
+            <% scope[:form].object.variables.each do |variable| -%>
+                <%- scope[:form].fields_for :variables, variable, :index => "" do |var_form| -%>
+                    <li>
+                        <% _scope = {:var_form => var_form, :variable => variable}; -%><%= _scope[:var_form].text_field :name, :class => "form_input environment_variable_name", :omit_id_generation => true -%>
+<span class="equals_sign"><%= l.string("EQUALS_SIGN") -%></span>
+<%= _scope[:var_form].text_field :valueForDisplay, :class => "form_input environment_variable_value", :omit_id_generation => true -%>
+<span class="icon_remove delete_parent"></span>
+<span class="wizard_error_message"></span>
+
+                    </li>
+                <%- end -%>
+            <%- end -%>
+        </ul>
+        <a class="add_item" id="add_variable"><%= l.string("ADD") -%></a>
+    </div>
+</div>
+<script type="text/javascript">
+    Util.on_load(function() {
+        function setupEnvVarForm(finish_button) {
+            var rowCreator = new EnvironmentVariables.RowCreator(jQuery('#environment_variables_template'), 'li', '.delete_parent');
+            var environmentVariables = new EnvironmentVariables(jQuery('ul.variables'), rowCreator, null, null, null);
+            environmentVariables.addDefaultRow();
+            environmentVariables.registerAddButton(jQuery("#add_variable"));
+            environmentVariables.registerFinishButton(finish_button);
+        }
+
+        var finish_button = jQuery(".finish");
+        setupEnvVarForm(finish_button);
+    });
+</script>
+    <%= config_md5_field %>
+    <%= register_defaultable_list("environment>variables") %>
+    <% scope = {:submit_label => "Save"}; -%><div class="form_buttons actions">
+    <%= submit_button(scope[:submit_label], :class => 'primary finish') %>
+    <button class="left submit close_modalbox_control"><span><%= l.string('CANCEL') -%></span></button>
+</div>
+<%- end -%>

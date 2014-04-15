@@ -1,0 +1,135 @@
+/* CSS 3 Mixins */
+.icon16 {
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+  background: url("/go/images/andare/ico-16x16.png") no-repeat 0 0; }
+  .icon16.setting {
+    background-position: 0 -211.5px;
+    float: right;
+    padding-right: 4px; }
+
+.pipeline_bundle .pipeline {
+  background: #FFF;
+  width: 245px;
+  float: left;
+  padding: 15px;
+  min-height: 190px;
+  overflow: hidden;
+  margin: 0 10px 10px 0;
+  border: 1px solid #cccccc;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 0 2px #cccccc;
+  -moz-box-shadow: 0 0 2px #cccccc;
+  box-shadow: 0 0 2px #cccccc; }
+  .pipeline_bundle .pipeline:hover {
+    -webkit-box-shadow: 0 0 3px #bbbbbb;
+    -moz-box-shadow: 0 0 3px #bbbbbb;
+    box-shadow: 0 0 3px #bbbbbb;
+    border-color: #bbbbbb; }
+  .pipeline_bundle .pipeline .title {
+    -ms-word-wrap: break-word;
+    -ms-word-break: break-all;
+    word-wrap: break-word;
+    word-break: break-all; }
+    .pipeline_bundle .pipeline .title .setting {
+      float: right; }
+
+.icon-pipeline.clear {
+  background: url("/go/images/andare/nav-sprites-pipeline.png") no-repeat 1px 1px;
+  height: 14px;
+  width: 14px;
+  position: absolute;
+  right: 15px;
+  padding: 2px;
+  top: 5px;
+  opacity: 0.4;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=40)";
+  filter: alpha(opacity=40);
+  -khtml-opacity: 0.4;
+  -moz-opacity: 0.4;
+  width: 14px; }
+.icon-pipeline:hover {
+  opacity: 0.7;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=70)";
+  filter: alpha(opacity=70);
+  -khtml-opacity: 0.7;
+  -moz-opacity: 0.7; }
+
+/* Pipeline Selector*/
+#pipelines .pipelines_selector {
+  float: right;
+  margin-left: 15px;
+  width: 380px; }
+  #pipelines .pipelines_selector .enhanced_dropdown {
+    max-width: 45em;
+    width: 35em;
+    z-index: 1001;
+    max-height: 55em; }
+  #pipelines .pipelines_selector .search-with-clear {
+    float: left;
+    position: relative; }
+    #pipelines .pipelines_selector .search-with-clear #pipeline-search {
+      margin-right: 10px; }
+
+#pipelines .pipelines_selector .enhanced_dropdown .select_all_none_panel {
+  background: #999999 url(../../images/g9/backgrounds/bg_glass_gradient.png) repeat-x center center;
+  border-bottom: 1px solid #cccccc;
+  padding: 5px;
+  overflow: hidden; }
+
+#pipelines .pipelines_selector .enhanced_dropdown .select_all_none_panel #select_text {
+  float: left;
+  padding: 5px 5px 5px 0;
+  color: #fff;
+  font-weight: bold; }
+
+#pipelines .pipelines_selector .enhanced_dropdown .scrollable_panel {
+  width: auto;
+  max-width: none;
+  border-top: 0;
+  padding: 10px; }
+
+#pipelines .pipelines_selector .enhanced_dropdown .selector_group .label {
+  font-weight: bold;
+  font-size: 12px;
+  padding: 5px;
+  color: #333; }
+
+#add_new_environment .pipelines .selector_pipeline .label,
+#pipelines .pipelines_selector .enhanced_dropdown .selector_pipeline .label {
+  font-weight: normal;
+  font-size: 1em; }
+
+#pipelines .pipelines_selector .enhanced_dropdown .selector_pipeline {
+  padding: 5px 5px 5px 20px; }
+
+#pipelines .pipelines_selector .enhanced_dropdown .selector_group {
+  border-bottom: 1px dotted #cccccc;
+  padding: 10px 0 0 5px; }
+
+.pipeline_bundle div.pipeline {
+  background: #fff;
+  float: left; }
+
+.highlight {
+  background: #FF2; }
+
+/*start : remove this block once we implement new form style*/
+#material_forms .new_form_label {
+  display: block;
+  text-align: left; }
+#material_forms .inline_instruction {
+  margin: 7px 0px 7px 0px; }
+#material_forms .new_form_item {
+  margin-top: 20px; }
+#material_forms .new-admin-subtitle {
+  margin-top: 15px; }
+#material_forms .new-admin-subtitle span {
+  background: #EEEEEE; }
+#material_forms .new_form_control > select, #material_forms .new_form_control > input {
+  float: left; }
+
+/*end : remove this block once we implement new form style*/

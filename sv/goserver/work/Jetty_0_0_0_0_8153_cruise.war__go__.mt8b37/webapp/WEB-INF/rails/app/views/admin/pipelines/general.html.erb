@@ -1,0 +1,131 @@
+<h3><%= l.string("BASIC_SETTINGS") %></h3>
+
+<% form_for :pipeline, @pipeline, :url => pipeline_update_path(:pipeline_name => @pipeline.name(), :current_tab => 'general'), :html => {:method => :put, :id => "pipeline_edit_form"} do |f| %>
+    <%= md5_field %>
+    <div class="fieldset">
+        <div class="form_item">
+            <div class="form_item_block required">
+                <%= required_label(f, com.thoughtworks.cruise.config.PipelineConfig::NAME, l.string('PIPELINE_NAME')) -%>
+                <%= f.text_field com.thoughtworks.cruise.config.PipelineConfig::NAME, :readonly => :readonly, :disabled=> :disabled -%>
+                <%= error_message_on(@pipeline, com.thoughtworks.cruise.config.PipelineConfig::NAME, :css_class => "form_error") %>
+            </div>
+
+            <div class="form_item_block required">
+                <%= required_label(f, com.thoughtworks.cruise.config.PipelineConfig::LABEL_TEMPLATE, l.string('LABEL_TEMPLATE')) -%>
+                <%= f.text_field com.thoughtworks.cruise.config.PipelineConfig::LABEL_TEMPLATE -%>
+                <div class="contextual_help has_go_tip_right" title="<%= l.string("TOOLTIP_LABEL_TEMPLATE") -%>"></div>
+                <%= error_message_on(@pipeline, com.thoughtworks.cruise.config.PipelineConfig::LABEL_TEMPLATE, :css_class => "form_error") %>
+            </div>
+
+            <div class="form_item_block checkbox_row">
+                <div class="checkbox_label_wrapper">
+                    <%= f.check_box com.thoughtworks.cruise.config.PipelineConfig::LOCK -%>
+                    <%= f.label com.thoughtworks.cruise.config.PipelineConfig::LOCK, l.string('AUTOMATIC_PIPELINE_LOCKING') -%>
+                </div>
+                <div class="contextual_help has_go_tip_right" title="<%= l.string("TOOLTIP_PIPELINE_LOCKING") -%>"></div>
+                <%= error_message_on(@pipeline, com.thoughtworks.cruise.config.PipelineConfig::LOCK, :css_class => "form_error") %>
+            </div>
+
+            <% if @pipeline.hasTemplate() -%>
+                <%- first_stage_of_template = first_stage_of_template(@cruise_config, @pipeline.getTemplateName()) -%>
+                <% f.fields_for :approval, first_stage_of_template.getApproval do |approval| -%>
+                    <div class="form_item_block checkbox_row">
+                        <div class="checkbox_label_wrapper">
+                            <%= approval.check_box com.thoughtworks.cruise.config.Approval::TYPE, {:disabled => :disabled, :name => :not_to_be_submitted}, com.thoughtworks.cruise.config.Approval::SUCCESS, com.thoughtworks.cruise.config.Approval::MANUAL -%>
+                            <%= approval.label com.thoughtworks.cruise.config.Approval::TYPE, l.string('AUTOMATIC_PIPELINE_SCHEDULING') -%>
+                            <div class="contextual_help has_go_tip_right" title="<%= l.string("TOOLTIP_AUTOMATIC_PIPELINE_SCHEDULING") -%>"></div>
+                        </div>
+                        <div class="inline_instruction"><%= l.string("INLINE_INSTRUCTION_AUTOMATIC_PIPELINE_SCHEDULING") -%></div>
+                    </div>
+                <% end -%>
+            <% else -%>
+                <% f.fields_for :approval, @pipeline.get(0).getApproval do |approval| -%>
+                    <div class="form_item_block checkbox_row">
+                        <div class="checkbox_label_wrapper">
+                            <%= approval.check_box com.thoughtworks.cruise.config.Approval::TYPE, {}, com.thoughtworks.cruise.config.Approval::SUCCESS, com.thoughtworks.cruise.config.Approval::MANUAL -%>
+                            <%= approval.label com.thoughtworks.cruise.config.Approval::TYPE, l.string('AUTOMATIC_PIPELINE_SCHEDULING') -%>
+                        </div>
+                        <div class="contextual_help has_go_tip_right" title="<%= l.string("TOOLTIP_AUTOMATIC_PIPELINE_SCHEDULING") -%>"></div>
+                    </div>
+                <% end -%>
+            <% end -%>
+        </div>
+    </div>
+    <h3><%= l.string("TIMER_SETTINGS") %></h3>
+    <div class="fieldset">
+        <div class="form_item">
+
+            <% f.fields_for com.thoughtworks.cruise.config.PipelineConfig::TIMER_CONFIG, @pipeline.timer do |t| %>
+                <div class="form_item_block timer_block">
+                    <%= t.label com.thoughtworks.cruise.config.TimerConfig::TIMER_SPEC, l.string('CRON_TIMER_SPECIFICATION') -%>
+                    <%= t.text_field com.thoughtworks.cruise.config.TimerConfig::TIMER_SPEC -%>
+                    <div class="contextual_help has_go_tip_right" title="<%= l.string("TOOLTIP_CRON_TIMER_SPECIFICATION") -%>"></div>
+                    <%= error_message_on(@pipeline.getTimer(), com.thoughtworks.cruise.config.TimerConfig::TIMER_SPEC, :css_class => "form_error") %>
+                </div>
+                <div class="form_item_block checkbox_row">
+                    <div class="checkbox_label_wrapper">
+                        <%= t.check_box com.thoughtworks.cruise.config.TimerConfig::TIMER_ONLY_ON_CHANGES -%>
+                        <%= t.label com.thoughtworks.cruise.config.TimerConfig::TIMER_ONLY_ON_CHANGES, l.string('ONLY_ON_CHANGES'), :id => "pipeline_timer_onlyOnChanges_label" -%>
+                    </div>
+                    <div class="contextual_help has_go_tip_right" title="<%= l.string("TOOLTIP_ONLY_ON_CHANGES") -%>"></div>
+                    <div class="inline_instruction"><%= l.string("NOTE_FOR_ONLY_ON_CHANGES") -%></div>
+                </div>
+
+            <% end %>
+
+        </div>
+    </div>
+
+    <% scope = {}; -%><p class="required">
+	<span class="asterisk"><%= l.string("REQUIRED_FIELD")%></span><%= l.string("REQUIRED_FIELD_MESSAGE")-%>
+</p>
+
+
+    <% scope = {:reset_url => pipeline_edit_path(:pipeline_name => params[:pipeline_name], :current_tab => 'general')}; -%><div class="form_buttons">
+    <%= submit_button(l.string("SAVE"), :class => 'primary skip_dirty_stop') %>
+    <%= link_to  l.string("RESET"), scope[:reset_url], :class => 'reset_button link_as_button skip_dirty_stop', :id => 'reset_form' -%>
+</div>
+    <% scope = {}; -%><script type="text/javascript">
+    Util.on_load(function() {
+        jQuery(".has_go_tip").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10});
+        jQuery(".has_go_tip_right").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "right"});
+        jQuery(".has_go_tip_left").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "left" });
+        jQuery(".has_go_tip_top").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "top" });
+    });
+</script>
+<% end %>
+
+<script type="text/javascript">
+    var timeSpecTexbox = jQuery("#pipeline_timer_timerSpec");
+    var onlyOnChangeCheckbox = jQuery("#pipeline_timer_onlyOnChanges");
+    var onlyOnChangeLabel = jQuery("#pipeline_timer_onlyOnChanges_label");
+
+    function enableCheckboxAndLabel() {
+        onlyOnChangeCheckbox.removeAttr("disabled");
+        onlyOnChangeLabel.removeClass("disabled");
+    }
+
+    function disableCheckboxAndLabel() {
+        onlyOnChangeCheckbox.attr("disabled", "disabled");
+        onlyOnChangeLabel.addClass("disabled");
+    }
+
+    Util.on_load(function() {
+        if (timeSpecTexbox.val()) {
+            enableCheckboxAndLabel();
+        }
+        else {
+            disableCheckboxAndLabel();
+        }
+        timeSpecTexbox.on("keyup", function() {
+            if (this.value == "") {
+                disableCheckboxAndLabel();
+            }
+            else {
+                enableCheckboxAndLabel();
+            }
+        });
+    });
+</script>
+
+

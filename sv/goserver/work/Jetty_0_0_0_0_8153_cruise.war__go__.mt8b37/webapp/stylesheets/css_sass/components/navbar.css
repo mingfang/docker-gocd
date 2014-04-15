@@ -1,0 +1,183 @@
+/* CSS 3 Mixins */
+.header #application_logo {
+  background-image: url(../../images/g9/logo_go.png);
+  background-repeat: no-repeat;
+  background-position: 0px 4px;
+  float: left;
+  height: 35px;
+  width: 114px; }
+
+.application_nav .icon {
+  background: url(/go/images/andare/nav-sprites.png) no-repeat; }
+.application_nav a, .application_nav .user li {
+  color: #999; }
+.application_nav .current a {
+  color: #AAAAAA; }
+.application_nav .tabs {
+  margin-top: 5px; }
+  .application_nav .tabs .current > a {
+    background-color: #86569A;
+    color: white;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3); }
+  .application_nav .tabs span {
+    color: #666;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    display: block;
+    font-size: 11px;
+    font-weight: 200;
+    line-height: 26px;
+    padding: 0 15px; }
+  .application_nav .tabs li.open > a {
+    color: #FFF;
+    background-color: #777;
+    border: 0;
+    -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    -moz-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3); }
+  .application_nav .tabs li a {
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    display: block;
+    font-size: 11px;
+    font-weight: 200;
+    line-height: 26px;
+    padding: 0 15px; }
+    .application_nav .tabs li a:hover {
+      color: #FFF;
+      background-color: #777777 !important;
+      border: 0;
+      -webkit-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+      -moz-box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3);
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.3); }
+.application_nav .dropdown-arrow-icon {
+  background: url("/go/images/andare/nav-user-triangle.png") no-repeat scroll right 10px transparent;
+  padding-right: 20px !important; }
+.application_nav .user {
+  float: right;
+  margin-right: -20px;
+  margin-top: 5px; }
+  .application_nav .user li {
+    padding: 0px 10px;
+    border-left: 1px solid #575757;
+    margin-left: 0; }
+    .application_nav .user li:first-child {
+      border: 0; }
+    .application_nav .user li.help {
+      margin-right: 9px;
+      margin-top: 9px; }
+    .application_nav .user li.current_user:hover {
+      background-color: #777;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.3) inset; }
+      .application_nav .user li.current_user:hover a {
+        color: white; }
+    .application_nav .user li.current_user {
+      position: relative;
+      border-radius: 8px;
+      background-position: -25px -12px;
+      padding-left: 30px;
+      padding-right: 0;
+      margin-right: 5px;
+      cursor: pointer; }
+      .application_nav .user li.current_user.current_user:hover, .application_nav .user li.current_user.selected {
+        background-color: #86569A;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.3) inset;
+        background-position: -25px -84px; }
+        .application_nav .user li.current_user.current_user:hover > .current_user_name, .application_nav .user li.current_user.selected > .current_user_name {
+          background-position: right -21px; }
+      .application_nav .user li.current_user .current_user_name {
+        border-radius: 10px;
+        display: block;
+        font-size: 11px;
+        font-weight: 200;
+        line-height: 19px;
+        padding: 4px;
+        padding-right: 13px;
+        color: #AAAAAA; }
+      .application_nav .user li.current_user .enhanced_dropdown {
+        background-color: #222222 !important;
+        border: 1px solid #555555;
+        border-radius: 4px 4px 4px 4px;
+        -webkit-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+        -moz-box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+        overflow: visible;
+        padding: 6px !important;
+        position: absolute;
+        text-transform: none;
+        width: auto !important; }
+        .application_nav .user li.current_user .enhanced_dropdown li {
+          border-radius: 3px;
+          padding: 0; }
+          .application_nav .user li.current_user .enhanced_dropdown li a {
+            display: block;
+            padding: 7px;
+            line-height: 1em; }
+          .application_nav .user li.current_user .enhanced_dropdown li:hover {
+            background-color: #777777; }
+      .application_nav .user li.current_user li {
+        border: 0 none !important;
+        float: none;
+        border-bottom: 1px solid #555555 !important; }
+        .application_nav .user li.current_user li a {
+          color: white; }
+        .application_nav .user li.current_user li:last-child {
+          border-bottom: 0 none !important; }
+        .application_nav .user li.current_user li:hover a {
+          color: black; }
+.application_nav .cruise_messages {
+  bottom: 0;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  -webkit-box-shadow: 0 0 8px rgba(0, 0, 0, 0.5);
+  position: fixed;
+  right: 0;
+  z-index: 9999; }
+  .application_nav .cruise_messages a {
+    background-color: #400;
+    background-image: url("/go/images/g9/icons/icon_error_16.png");
+    background-position: 6px 4px;
+    background-repeat: no-repeat;
+    border-left: 1px solid #880000;
+    border-top: 1px solid #880000;
+    color: #FFF;
+    display: block;
+    font-size: 11px;
+    font-weight: 200;
+    padding: 6px 10px 6px 30px; }
+    .application_nav .cruise_messages a:hover {
+      background-color: #600; }
+.application_nav li {
+  float: left;
+  margin-left: 10px; }
+
+.user a:hover {
+  color: #ffffff; }
+
+.current_user.selected a {
+  color: white !important; }
+
+/* dropdown nav starts*/
+.dropdown-menu {
+  position: absolute;
+  width: 200px;
+  top: 46px;
+  display: none;
+  padding: 5px;
+  border-radius: 0 0 10px 10px;
+  background: #222; }
+  .dropdown-menu li {
+    margin-left: 0 !important;
+    float: none !important; }
+    .dropdown-menu li a {
+      border-radius: 5px !important;
+      padding: 0 10px !important; }
+
+.open .dropdown-menu {
+  display: block; }
+
+/* dropdown nav ends*/

@@ -1,0 +1,129 @@
+<% @view_title = "Edit Template" -%>
+
+<div class="admin_workspace">
+    <% form_for(:template, @pipeline, :url => update_template_permissions_path(:template_name => @pipeline.name().toString()), :html => {:method => "post", :id => "template_edit_form"}) do |f| %>
+
+        <div class="form_content">
+            <h3><%= l.string("BASIC_SETTINGS") -%></h3>
+
+            <div class="fieldset">
+                <%= md5_field %>
+                <%= f.label com.thoughtworks.cruise.config.PipelineTemplateConfig::NAME, l.string('TEMPLATE_NAME') -%>
+                <%= f.text_field com.thoughtworks.cruise.config.PipelineTemplateConfig::NAME, :readonly => :readonly, :disabled=> :disabled -%>
+                <%= error_message_on(@pipeline, com.thoughtworks.cruise.config.PipelineTemplateConfig::NAME, :css_class => "form_error") %>
+                <div class="clear"></div>
+            </div>
+
+            <div class="permissions">
+                <h3> <%= l.string("USER_PERMISSIONS") -%> </h3>
+                <div class="fieldset user_permissions_for_template">
+                    <% scope = {:permissions => @pipeline.getAuthorization().getUserAuthorizations(), :permission_type => com.thoughtworks.cruise.config.Authorization::UserType::USER, :f => f, :autocomplete_suggestions => @autocomplete_users}; -%><% empty_permission = com.thoughtworks.cruise.config.Authorization::PresentationElement.new("", scope[:permission_type]) %>
+
+<textarea id="<%= scope[:permission_type] %>_users_and_roles_template" class="template">
+    <%- scope[:f].fields_for com.thoughtworks.cruise.config.PipelineConfigs::AUTHORIZATION, empty_permission, :index => "" do |permission_form| -%>
+        <td>
+            <%= permission_form.text_field com.thoughtworks.cruise.config.Authorization::PresentationElement::NAME, :class => "form_input permissions_#{scope[:permission_type]}_name", :omit_id_generation => true %>
+            <%= permission_form.hidden_field com.thoughtworks.cruise.config.Authorization::PresentationElement::TYPE, :omit_id_generation => true %>
+
+            <% permission_form.fields_for com.thoughtworks.cruise.config.Authorization::PRIVILEGES, empty_permission, :index => "" do |privileges_form| %>
+                <%= privileges_form.hidden_field com.thoughtworks.cruise.config.Authorization::PresentationElement::ADMIN_PRIVILEGE, :value => com.thoughtworks.cruise.config.Authorization::PrivilegeState::ON, :omit_id_generation => true %>
+            <% end %>
+        </td>
+        <td>
+            <%= action_icon({:type => "remove", :class => "delete_parent"}) %>
+        </td>
+    <%- end -%>
+</textarea>
+
+<table class="template_permissions_table users_and_roles list_table">
+    <thead>
+    <tr>
+        <th class="name"><%= l.string("NAME") -%></th>
+        <th class="remove"><%= l.string("REMOVE") %></th>
+    </tr>
+    </thead>
+
+    <tbody class="<%= scope[:permission_type] %>_users_and_roles">
+    <% scope[:permissions].each do |permission| %>
+        <% scope[:f].fields_for com.thoughtworks.cruise.config.PipelineConfigs::AUTHORIZATION, permission, :index => "" do |permission_form| %>
+            <tr id="<%= "#{scope[:permission_type]}_#{permission.getName()}" -%>">
+                <td>
+                    <%= permission_form.text_field com.thoughtworks.cruise.config.Authorization::PresentationElement::NAME, :class => "form_input permissions_#{scope[:permission_type]}_name", :omit_id_generation => true %>
+                    <%= permission_form.hidden_field com.thoughtworks.cruise.config.Authorization::PresentationElement::TYPE, :omit_id_generation => true %>
+                    <% permission_form.fields_for com.thoughtworks.cruise.config.Authorization::PRIVILEGES, empty_permission, :index => "" do |privileges_form| %>
+                        <%= privileges_form.hidden_field com.thoughtworks.cruise.config.Authorization::PresentationElement::ADMIN_PRIVILEGE, :value => com.thoughtworks.cruise.config.Authorization::PrivilegeState::ON, :omit_id_generation => true %>
+                    <% end %>
+                    <%= error_message_on(permission, com.thoughtworks.cruise.config.Authorization::PresentationElement::NAME, :css_class => "name_value_error") %>
+                </td>
+                <td>
+                    <%= action_icon({:type => "remove", :class => "delete_parent"}) %>
+                </td>
+            </tr>
+        <% end
+           end %>
+    </tbody>
+</table>
+
+<%= action_icon({:type => "add", :href => "javascript:void(0);", :id => "#{scope[:permission_type]}_add_users_and_roles", :class => "skip_dirty_stop", :text => l.string("ADD_#{scope[:permission_type]}_PERMISSION")}) %>
+
+<script type="text/javascript">
+    Util.on_load(function () {
+        function hookupPermissionsAutoComplete() {
+            jQuery(<%="\".permissions_#{scope[:permission_type]}_name\"" -%>).autocomplete(<%= scope[:autocomplete_suggestions] -%>, {
+                minChars: 0,
+                width: 248,
+                matchContains: "word",
+                autoFill: false});
+        }
+
+        function setupVarForm() {
+            var rowCreator = new EnvironmentVariables.RowCreator(jQuery('#<%= scope[:permission_type] %>_users_and_roles_template'), 'tr', '.delete_parent');
+            var variables = new EnvironmentVariables(
+                    jQuery('tbody.<%= scope[:permission_type] %>_users_and_roles'),
+                    rowCreator,
+                    null,
+                    function (inputs) {
+                        inputs.dirty_form();
+                        hookupPermissionsAutoComplete();
+                    },
+                    function (row) {
+                        row.parents("form.dirtyform").data("dirty", true);
+                    });
+
+            variables.registerAddButton(jQuery("#<%= scope[:permission_type] %>_add_users_and_roles"));
+            variables.addDefaultRow();
+        }
+
+        setupVarForm();
+        hookupPermissionsAutoComplete();
+    });
+</script>
+                    <div class="clear"></div>
+                </div>
+            </div>
+        </div>
+        <% scope = {:reset_url => edit_template_permissions_path(:template_name => @pipeline.name().toString())}; -%><div class="form_buttons">
+    <%= submit_button(l.string("SAVE"), :class => 'primary skip_dirty_stop') %>
+    <%= link_to  l.string("RESET"), scope[:reset_url], :class => 'reset_button link_as_button skip_dirty_stop', :id => 'reset_form' -%>
+</div>
+    <% end %>
+</div>
+
+<% scope = {:form_id => 'template_edit_form', :reset_id => "reset_form"}; -%><script type="text/javascript">
+    Util.on_load(function() {
+        skip_dirty_stop = false;
+        jQuery('#<%= scope[:form_id] %>').dirty_form();
+        jQuery('a:not(.skip_dirty_stop)').  dirty_stopper({ dialog : {title : "<%=l.string("UNSAVED_CHANGES")-%>", height: 80}, message : "<%=l.string("UNSAVED_CHANGES_WARNING_MESSAGE")-%>"});
+        jQuery(window).resize(function() {
+            jQuery(".ui-dialog-content") && jQuery(".ui-dialog-content").dialog("option", "position", "center");
+        });
+    });
+</script>
+<% scope = {}; -%><script type="text/javascript">
+    Util.on_load(function() {
+        jQuery(".has_go_tip").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10});
+        jQuery(".has_go_tip_right").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "right"});
+        jQuery(".has_go_tip_left").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "left" });
+        jQuery(".has_go_tip_top").tipTip({activation: "click", maxWidth: "auto", edgeOffset: 10, defaultPosition: "top" });
+    });
+</script>

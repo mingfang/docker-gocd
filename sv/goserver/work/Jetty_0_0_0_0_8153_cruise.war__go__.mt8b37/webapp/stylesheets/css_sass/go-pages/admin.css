@@ -1,0 +1,225 @@
+/*congig xml*/
+.new_form_content p.required {
+  margin-top: 30px; }
+.new_form_content .new_form_item {
+  margin-top: 10px; }
+  .new_form_content .new_form_item .error_message {
+    word-break: break-all; }
+  .new_form_content .new_form_item #check_package {
+    margin-left: 0; }
+  .new_form_content .new_form_item .fieldWithErrors input, .new_form_content .new_form_item.fieldWithErrors input {
+    float: none; }
+    .new_form_content .new_form_item .fieldWithErrors input:focus, .new_form_content .new_form_item.fieldWithErrors input:focus {
+      float: none; }
+  .new_form_content .new_form_item.fieldWithErrors select {
+    float: none; }
+  .new_form_content .new_form_item .form_error {
+    display: inline-block;
+    float: none;
+    padding: 0;
+    margin: 7px;
+    margin-bottom: 10px; }
+
+.vtop input, .vtop select {
+  vertical-align: top; }
+
+.new_form_control {
+  display: table-cell; }
+
+.new_form_label {
+  display: table-cell;
+  text-align: right;
+  padding-right: 10px;
+  width: 300px; }
+
+#MB_content .new_form_label {
+  width: 170px; }
+
+.new-admin-title {
+  padding-bottom: 10px;
+  margin-bottom: 20px;
+  font-size: 18px;
+  border-bottom: 1px solid #cccccc; }
+  .new-admin-title .help {
+    float: right;
+    font-size: 0.6em;
+    margin-top: 3px; }
+
+.new-admin-subtitle {
+  border-bottom: 2px solid #cccccc;
+  margin-top: 30px;
+  margin-bottom: 20px; }
+  .new-admin-subtitle span {
+    padding: 3px;
+    background-color: #f6f6f6;
+    font-size: 0.7em;
+    display: inline-block;
+    position: relative;
+    margin-top: 0px;
+    margin-left: 20px;
+    top: 10px; }
+
+.admin_holder {
+  background: none repeat scroll 0 0 #eeeeee;
+  border-radius: 5px 5px 5px 5px;
+  padding: 5px;
+  margin-top: 10px;
+  border: 1px solid #cccccc; }
+
+#content_area pre {
+  background: none repeat scroll 0 0 white;
+  padding: 10px;
+  white-space: pre-wrap;
+  border: 1px solid #cccccc; }
+
+#content_area .conflicted_content textarea {
+  float: right;
+  margin-top: 21px;
+  width: 40%; }
+
+.heading h2 {
+  display: inline; }
+.heading .label {
+  color: #999; }
+.heading span {
+  float: right;
+  font-size: 1.1em;
+  margin-top: 2px;
+  white-space: nowrap; }
+
+#admin-holder-for-admin-config-source-xml pre, #content_area textarea {
+  height: 600px;
+  padding: 10px;
+  margin-bottom: 15px;
+  overflow: auto; }
+
+#admin-holder-for-admin-config-source-xml pre {
+  border: 1px solid #cccccc;
+  margin-top: 5px; }
+
+#content_area textarea {
+  height: 620px;
+  background-color: #fffacd; }
+
+#admin-holder-for-admin-config-source-xml .conflicted_content h3 {
+  margin-top: 10px; }
+
+#admin-holder-for-admin-config-source-xml .buttons-group > * {
+  min-width: 100px; }
+
+/*start : added this class because ellipses*/
+#admin-holder-for-admin-config-source-xml .buttons-group #cancel_edit, #admin-holder-for-admin-config-source-xml .buttons-group #save_config {
+  position: absolute;
+  margin-top: -20px; }
+#admin-holder-for-admin-config-source-xml .buttons-group #cancel_edit {
+  margin-right: 24px;
+  right: 0; }
+#admin-holder-for-admin-config-source-xml .buttons-group #save_config {
+  right: 150px; }
+#admin-holder-for-admin-config-source-xml .buttons-group #edit_config {
+  margin-top: -18px;
+  position: absolute;
+  right: 21px; }
+
+/*end : added this class because ellipses*/
+.config_change_timestamp {
+  color: #999999;
+  font-size: 1.1em;
+  margin-right: 250px;
+  overflow: hidden;
+  padding-top: 5px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 16px; }
+
+#config_editor_form #content_area {
+  clear: both; }
+
+.conflicted_content + .current_content #content_area, .conflicted_content + .current_content .buttons-group {
+  clear: none !important;
+  width: 48%;
+  padding: 10px 1% 0;
+  background-color: #eee;
+  float: right; }
+
+.conflicted_content + .current_content .buttons-group #cancel_edit, .conflicted_content + .current_content .buttons-group #save_config {
+  margin-top: -17px !important; }
+.conflicted_content + .current_content .buttons-group #cancel_edit {
+  margin-right: 33px !important; }
+.conflicted_content + .current_content .buttons-group #save_config {
+  right: 158px !important; }
+
+.conflicted_content {
+  width: 49%;
+  float: left; }
+  .conflicted_content pre {
+    white-space: pre-wrap;
+    margin-top: 21px !important; }
+
+select#select_template {
+  float: left; }
+
+/*plugins*/
+.plugins {
+  float: none;
+  margin-top: 20px;
+  line-height: 1.3em;
+  overflow: auto; }
+  .plugins .plugin {
+    padding: 10px;
+    float: none;
+    border-top: 1px solid #cccccc; }
+    .plugins .plugin.disabled {
+      background: #f1f1f1; }
+      .plugins .plugin.disabled span {
+        color: #999; }
+      .plugins .plugin.disabled img {
+        opacity: 0.5; }
+    .plugins .plugin .show-info {
+      margin-top: 5px;
+      display: block; }
+    .plugins .plugin .plugin-logo {
+      display: inline-block;
+      height: 60px;
+      width: 60px;
+      float: left;
+      background-color: white; }
+    .plugins .plugin .more-info-detail {
+      float: none;
+      display: block;
+      overflow: auto;
+      margin-top: 5px; }
+      .plugins .plugin .more-info-detail li {
+        float: none;
+        line-height: 18px; }
+        .plugins .plugin .more-info-detail li .key {
+          width: 150px;
+          display: inline-block; }
+    .plugins .plugin .key {
+      color: #bbb;
+      font-weight: bold;
+      margin-right: 1ex; }
+    .plugins .plugin .plugin-details {
+      font-size: 14pt; }
+    .plugins .plugin .plugin-messages {
+      margin-top: 5px; }
+      .plugins .plugin .plugin-messages span {
+        font-weight: bold; }
+      .plugins .plugin .plugin-messages ul {
+        float: none;
+        margin-left: 15px; }
+      .plugins .plugin .plugin-messages li {
+        list-style: circle;
+        margin-top: 5px;
+        float: none; }
+  .plugins .description {
+    margin-top: 5px; }
+  .plugins .plugin-author {
+    float: right; }
+  .plugins .version {
+    color: #999; }
+  .plugins .smaller {
+    font-size: 0.6em; }
+
+.plugin-data {
+  margin-left: 70px; }

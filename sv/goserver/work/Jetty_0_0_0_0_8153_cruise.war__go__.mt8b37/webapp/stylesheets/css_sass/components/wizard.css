@@ -1,0 +1,36 @@
+.andare .wizard .navigation li {
+  background: none repeat scroll 0 0 white;
+  border: 1px solid #dddddd;
+  display: inline-block;
+  height: 90px;
+  cursor: pointer;
+  margin-right: 4px;
+  padding: 10px;
+  top: 1px;
+  width: 242px; }
+  .andare .wizard .navigation li:last-child {
+    margin-right: 0; }
+  .andare .wizard .navigation li.current {
+    background: #f9f9f9; }
+.andare .wizard .steps .content {
+  background: none repeat scroll 0 0 #f9f9f9;
+  border: 1px solid #dddddd;
+  clear: both;
+  height: 350px;
+  margin-top: -1px; }
+.andare .wizard .steps > div {
+  display: none; }
+  .andare .wizard .steps > div.current {
+    display: block; }
+.andare .wizard .footer {
+  padding: 20px; }
+  .andare .wizard .footer .next {
+    float: right; }
+
+#getting-started {
+  background: white;
+  margin: 30px auto 0;
+  min-height: 500px;
+  padding: 5px;
+  position: relative;
+  width: 800px; }

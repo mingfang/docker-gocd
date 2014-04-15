@@ -1,0 +1,3 @@
+<div id="tab-content-of-history" class="widget" $history_extra_attrs>
+    #parse("sidebar/_sidebar_build_list.vm")
+</div>

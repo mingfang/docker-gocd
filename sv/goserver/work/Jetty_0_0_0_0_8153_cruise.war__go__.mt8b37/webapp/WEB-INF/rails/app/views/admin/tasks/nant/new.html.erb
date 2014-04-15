@@ -1,0 +1,28 @@
+<% scope = scope; -%><div class="form_item required">
+    <% _scope = {:form => scope[:form], :task => scope[:task], :task_type => "NANT"}; -%><%- task_type = _scope[:task_type] %>
+<div class="form_item_block">
+    <%= label_tag l.string('BUILD_FILE') -%>
+    <%= _scope[:form].text_field com.thoughtworks.cruise.config.BuildTask::BUILD_FILE %>
+    <div class="contextual_help has_go_tip_right build_file" title="<%=l.string("TOOLTIP_#{task_type}_BUILD_FILE")-%>"></div>
+    <%= error_message_on(_scope[:task], com.thoughtworks.cruise.config.BuildTask::BUILD_FILE, :css_class => "form_error") %>
+</div>
+<div class="form_item_block">
+    <%= label_tag l.string('TARGET') -%>
+    <%= _scope[:form].text_field com.thoughtworks.cruise.config.BuildTask::TARGET %>
+    <div class="contextual_help has_go_tip_right target" title="<%=l.string("TOOLTIP_#{task_type}_TARGET")-%>"></div>
+    <%= error_message_on(_scope[:task], com.thoughtworks.cruise.config.BuildTask::TARGET, :css_class => "form_error") %>
+</div>
+<div class="form_item_block">
+    <%= label_tag l.string('WORKING_DIRECTORY') -%>
+    <%= _scope[:form].text_field com.thoughtworks.cruise.config.BuildTask::WORKING_DIRECTORY %>
+    <div class="contextual_help has_go_tip_right working_directory" title="<%=l.string("TOOLTIP_#{task_type}_WORKING_DIRECTORY")-%>"></div>
+    <%= error_message_on(_scope[:task], com.thoughtworks.cruise.config.BuildTask::WORKING_DIRECTORY, :css_class => "form_error") %>
+</div>
+
+    <div class="form_item_block">
+        <%= label_tag l.string('NANT_PATH') -%>
+        <%= scope[:form].text_field com.thoughtworks.cruise.config.NantTask::NANT_PATH %>
+        <div class="contextual_help has_go_tip_right nant_path" title="<%= l.string("TOOLTIP_NANT_NANT_PATH") -%>"></div>
+        <%= error_message_on(scope[:task], com.thoughtworks.cruise.config.NantTask::NANT_PATH, :css_class => "form_error") %>
+    </div>
+</div>

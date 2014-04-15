@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//iBATIS.com//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd">
+
+<sqlMap namespace="ArtifactPlan">
+
+    <resultMap id="select-artifacts" class="com.thoughtworks.cruise.config.ArtifactPlan">
+        <result property="id" column="id" nullValue="0"/>
+        <result property="buildId" column="buildId" nullValue="0"/>
+        <result property="src" column="src"   />
+        <result property="dest" column="dest" />
+        <result property="artifactType" column="artifactType"/>
+    </resultMap>
+    
+    <parameterMap id="insert-artifactplan-param" class="com.thoughtworks.cruise.config.ArtifactPlan">
+        <parameter property="buildId"/>
+        <parameter property="src"   />
+        <parameter property="dest" />
+        <parameter property="artifactType"/>
+    </parameterMap>
+
+    <insert id="insertArtifactPlan" parameterMap="insert-artifactplan-param">
+        INSERT INTO artifactPlans (buildId, src, dest, artifactType) VALUES (?, ?, ?, ?)
+        <selectKey resultClass="long" keyProperty="id" type="post">
+            CALL IDENTITY();
+        </selectKey>
+    </insert>
+
+    <insert id="insertArtifactPlan-postgresql" parameterMap="insert-artifactplan-param">
+        INSERT INTO artifactPlans (buildId, src, dest, artifactType) VALUES (?, ?, ?, ?)
+        <selectKey resultClass="long" keyProperty="id" type="post">
+            SELECT lastval();
+        </selectKey>
+    </insert>
+
+    <select id="select-artifacts" resultMap="select-artifacts">
+        SELECT *
+        FROM artifactPlans
+        WHERE buildId = #jobId#
+        ORDER BY id ASC
+    </select>
+</sqlMap>

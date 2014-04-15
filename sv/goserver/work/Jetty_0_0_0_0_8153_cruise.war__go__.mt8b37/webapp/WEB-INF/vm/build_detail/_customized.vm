@@ -1,0 +1,18 @@
+<div id="tab-content-of-${customized_name.toLowerCase()}" style='display:none'>
+</div>
+<script>
+window["tab-content-of-${customized_name.toLowerCase()}_callback"] = function() {
+    var innerHTML = $("tab-content-of-${customized_name.toLowerCase()}").innerHTML;
+    innerHTML = innerHTML ? innerHTML : "";
+    if (innerHTML.include("iframe")) {
+        return;
+    }
+    $("tab-content-of-${customized_name.toLowerCase()}").innerHTML = '<div><a href="$req.getContextPath()/$presenter.getRestfulUrl($customized_path)">Download ${customized_name}</a></div>' 
+            + '<iframe src="$req.getContextPath()/$presenter.getRestfulUrl($customized_path)" frameborder="0"></iframe>';
+    $("tab-content-of-${customized_name.toLowerCase()}").show();
+}
+
+function a() {
+    alert(1);
+}
+</script>

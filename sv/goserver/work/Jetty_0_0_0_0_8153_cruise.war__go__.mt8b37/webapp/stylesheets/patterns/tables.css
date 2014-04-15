@@ -1,0 +1,86 @@
+/**
+ * Tables.css
+ */
+
+
+/**
+ * TABLE OF CONTENTS
+ *
+ * =LIST_TABLE
+ * =SORTABLE_TABLE
+ * =SELECTABLE_TABLE
+ * != NEEDS MIGRATING
+ */
+
+
+/**
+ * =LIST_TABLE
+**/
+.list_table {
+  background: #FFF;
+  border: 1px solid #ccc;
+  box-shadow: 0 0 5px #bbb;
+    -moz-box-shadow: 0 0 5px #BBB;
+    -webkit-box-shadow: 0 0 5px #BBB;
+  font-size:11px;
+  width: 100%;
+}
+.list_table th,
+.list_table td {
+  padding: 8px 10px;
+}
+.list_table th {
+  background: #EEE url(../../images/g9/backgrounds/overlay_gradient_th.png) repeat-x;
+  border-bottom: 1px solid #DDD;
+  white-space:nowrap;
+}
+.list_table th a {
+  color: #333;
+}
+.list_table td {
+  border-bottom: 1px dotted #DDD;
+}
+.list_table .Disabled {
+  color: #999;
+  font-style: italic;
+}
+
+
+/**
+ * =SORTABLE TABLE
+**/
+.sortable_table th a.sorted_asc span {
+  background-image: url(../../images/g9/icons/icon_sorted_up.png);
+}
+.sortable_table th a.sorted_desc span {
+  background-image: url(../../images/g9/icons/icon_sorted_down.png);
+}
+.sortable_table th a span {
+  background-image: url(../../images/g9/icons/icon_sort_sortable.png);
+  background-position: right;
+  background-repeat: no-repeat;
+  display: inline-block;
+  padding-right: 15px;
+}
+.sortable_table th a span:hover {
+  background-image: url(../../images/g9/icons/icon_sort_sortable_hover.png);
+}
+
+
+/**
+ * =SELECTABLE_TABLE
+**/
+.selectable_table td.selector {
+  padding: 0 2px 0 5px;
+  text-align: center;
+}
+ 
+
+/**
+ * != NEEDS MIGRATING
+**/
+
+th.remove, th.actions {
+  text-align: left;
+  min-width: 110px;
+}

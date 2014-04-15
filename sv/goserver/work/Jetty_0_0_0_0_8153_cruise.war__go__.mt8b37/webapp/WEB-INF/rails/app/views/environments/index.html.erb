@@ -1,0 +1,372 @@
+<% @view_title = "Environments" -%>
+<% @page_header = '<h1 id="page-title" class="entity_title">Environments</h1>' -%>
+
+  <div id="ajax_environments" class="environments">
+      <% scope = {:show_edit_environments => @show_add_environments}; -%><% _scope = {}; -%><div id="unused_feature" class="unused_feature">
+    <% if @environments.empty? %>
+        <div class="pipeline_bundle environment">
+            <div class="pipelines">
+                <%= content_wrapper_tag %>
+                <div class="notification">
+                    <p class="information">
+                        <%= l.string("NO_ENVIRONMENTS_CONFIGURED") %>
+                        <%= link_to l.string("MORE_INFORMATION"), url_for_path('/help/managing_environments.html'), :target => "_blank" %>
+                    </p>
+                </div>
+                <%= end_content_wrapper %>
+            </div>
+        </div>
+    <% end %>
+</div>
+
+<% @environments.each do |env_in_environments| %>
+    <div id="<%= env_dom_id(env_in_environments.name()) %>">
+        <% _scope = {:environment => env_in_environments, :show_edit_environments => scope[:show_edit_environments]}; -%><% _scope[:omit_pipeline] ||= false %>
+<div class="pipeline_bundle environment">
+    <div class="pipelines">
+        <%= content_wrapper_tag %>
+        <h2 class="entity_title">
+            <% if _scope[:show_edit_environments] %>
+                <%= link_to _scope[:environment].name(), environment_show_path(:name => _scope[:environment].name())%>
+            <% else %>
+                <%= _scope[:environment].name() %>
+            <% end %>
+        </h2>
+        <% _scope[:pipeline_models] = _scope[:environment].getPipelineModels() %>
+        <% if _scope[:pipeline_models].empty? %>
+            <span><%= l.string('NO_PIPELINES_CONFIGURED_FOR_ENVIRONMENT')-%></span>
+        <% else %>
+            <% _scope[:pipeline_models].each do |pipeline_model_in_environment| %>
+                <div id="<%= env_pipeline_dom_id(pipeline_model_in_environment) %>" class="pipeline hidereveal_collapsed">
+                    <% unless _scope[:omit_pipeline] %>
+                        <% cache(view_cache_key.forEnvironmentPipelineBox(pipeline_model_in_environment), :subkey => "environment_html") do %>
+                            <% __scope = {:pipeline_model => pipeline_model_in_environment, :pipeline_model_subkey => 'environment_html'}; -%><% __scope[:pipeline] = __scope[:pipeline_model].getLatestPipelineInstance()
+   __scope[:pipeline_name] = __scope[:pipeline].getName() -%>
+
+<% ___scope = {:pipeline_model => __scope[:pipeline_model], :show_compare => true}; -%><% ___scope[:show_controls] ||= false
+   ___scope[:should_display_previously_blurb] ||= false
+   ___scope[:show_changes] ||= false
+   ___scope[:pipeline_name] = ___scope[:pipeline_model].getName() -%>
+<div class="pipeline_header">
+    <%
+        h3_class = ""
+        if ___scope[:pipeline_model].hasNewRevisions() && !___scope[:show_changes]
+            h3_class = " has_new_materials"
+        end
+    %>
+    <div class="pipeline_actions">
+        <% ____scope = {:pipeline_model => ___scope[:pipeline_model]}; -%><% ____scope[:latestPIM] = ____scope[:pipeline_model].getLatestPipelineInstance() -%>
+<% if ____scope[:latestPIM].isCurrentlyLocked() %>
+    <% if ____scope[:latestPIM].canUnlock() -%>
+        <span class="locked_instance click_to_unlock" id='unlock' title="Click to unlock this pipeline">
+            <%= blocking_link_to_remote "&nbsp;", :method => :post, :url => api_pipeline_action_path(:pipeline_name =>  ____scope[:pipeline_model].getName(), :action => 'releaseLock'),
+                                        :update => {:failure => "message_pane", :success => 'function(){}'}, :before => "spinny('unlock');" %>
+        </span>
+    <% else -%>
+        <span class="locked_instance locked" title="This pipeline is locked">
+          &nbsp;
+        </span>
+    <% end -%>
+<% end -%>
+        <%- if ___scope[:pipeline_model].canAdminister() -%>
+            <%= link_to "", pipeline_edit_path(:pipeline_name => ___scope[:pipeline_name], :current_tab => "general"), :class => 'icon16 setting' %>
+        <%- end -%>
+    </div>
+    <div class="pipeline_name_link">
+        <h3 class="title entity_title<%= h3_class %> ">
+            <%= link_to(___scope[:pipeline_name], url_for_pipeline(___scope[:pipeline_name])) %>
+        </h3>
+    </div>
+</div>
+
+<div class="alert" id="trigger-result-<%= ___scope[:pipeline_name] -%>"></div>
+
+<% ___scope[:pipeline_model].getActivePipelineInstances().each do |active_pipeline_in_pipeline| -%>
+    <div class="pipeline_instance">
+        <% if !active_pipeline_in_pipeline.hasHistoricalData() %>
+            <div class='status'>
+                <span class='message'>
+                  No historical data
+                </span>
+            </div>
+        <% else %>
+            <div class='status details'>
+                <% ____scope = {:active_pipeline_in_pipeline => active_pipeline_in_pipeline}; -%><% ____scope[:rendering_gadget] ||= false %>
+
+<div class="label">Label:<%
+       #check to see if we are currently waiting on scheduling (aka loading)
+       if ____scope[:active_pipeline_in_pipeline].getLabel() == 'TBD' -%>
+        <img src="images/new/ajax_loader_small.gif" alt="Scheduling..."/>
+    <% else -%>
+        <a href="<%= url_for_pipeline_value_stream_map(____scope[:active_pipeline_in_pipeline], :only_path => !____scope[:rendering_gadget]) -%>" <%= ____scope[:rendering_gadget] ? "target='_blank'" : ""%> title="<%= ____scope[:active_pipeline_in_pipeline].getLabel()%>"><%= truncate(____scope[:active_pipeline_in_pipeline].getLabel(), :length => 40) -%></a>
+    <% end -%>
+</div>
+
+
+                <% if ___scope[:show_compare] %>
+                <span class="compare_pipeline dashboard" >
+                    <%= link_to("#{l.string("COMPARE")}",
+                                    compare_pipelines_path(:pipeline_name => ___scope[:pipeline_name], :from_counter => active_pipeline_in_pipeline.getCounter() - 1, :to_counter => active_pipeline_in_pipeline.getCounter()),
+                                    :title => l.string("TOOLTIP_COMPARE_WITH_PREVIOUS"))
+                    %>
+                </span>
+                <% end %>
+
+                <% if ___scope[:show_changes] && !(___scope[:revisions] = active_pipeline_in_pipeline.getCurrentRevisions()).empty?
+                    ___scope[:instance_identifier] = pipeline_instance_identifier(active_pipeline_in_pipeline)
+                    ___scope[:changes_id] = pipeline_build_cause_popup_id(active_pipeline_in_pipeline)
+                    ___scope[:show_changes_id] ="show_changes_#{___scope[:instance_identifier]}"
+                -%>
+                    <% if ___scope[:show_compare] %>
+                        <span class="separator">&nbsp;</span>
+                    <% end %>
+
+                    <span class="changes_button_wrapper">
+                        <%= link_to(l.string("CHANGES"), build_cause_path(:pipeline_name => active_pipeline_in_pipeline.getName(), :pipeline_counter => active_pipeline_in_pipeline.getCounter()), :id => ___scope[:show_changes_id], :class => "show_panel submit_small dashboard_build_cause_button") -%>
+                    </span>
+
+                    <script type="text/javascript">
+                    </script>
+                <% end -%>
+                <% ____scope = {:active_pipeline_in_pipeline => active_pipeline_in_pipeline}; -%><div class="pipeline_instance_details">
+    <div class="schedule_time" title="<%= ____scope[:active_pipeline_in_pipeline].getScheduledDate() %>">
+        <%= trigger_message(____scope[:active_pipeline_in_pipeline].getScheduledDate().getTime(), ____scope[:active_pipeline_in_pipeline]) -%>
+    </div>
+    <% _____scope = {:pipeline => ____scope[:active_pipeline_in_pipeline],
+                                                                         :total_width => 20.0,
+                                                                         :rendering_gadget => ____scope[:rendering_gadget] }; -%><div class="stages">
+    <div class="latest_stage">
+            <%= _____scope[:pipeline].getPipelineStatusMessage() %>
+    </div>
+
+    <% _____scope[:pipeline].getStageHistory().each do |stage_in_stage_bar| %>
+        <% ______scope = {:pipeline => _____scope[:pipeline],
+                                           :stage => stage_in_stage_bar,
+                                           :total_width => _____scope[:total_width],
+                                           :rendering_gadget => _____scope[:rendering_gadget]}; -%><% ______scope[:rendering_gadget] ||= false %>
+<% if placeholder_stage?(______scope[:stage]) -%>
+    <span class='stage'>
+        <% _______scope = {:pipeline => ______scope[:pipeline], :stage => ______scope[:stage], :total_width => ______scope[:total_width]}; -%><%
+   _______scope[:state] = _______scope[:stage].getState()
+   _______scope[:stage_name] = _______scope[:stage].getName()
+   _______scope[:last_run_stage] = _______scope[:pipeline].isLatestStage(_______scope[:stage])
+%>
+<div class="stage_bar_wrapper <%= _______scope[:last_run_stage] ? " last_run_stage" : "" -%>">
+    <div class="stage_bar <%= _______scope[:state] -%>" title="<%= "%s (%s)" % [_______scope[:stage_name], _______scope[:state]] -%>" style='width: <%= stage_width_em(_______scope[:pipeline].getStageHistory().size(), _______scope[:last_run_stage], _______scope[:total_width]) -%>'>
+        <%= check_for_cancelled_contents(_______scope[:state]) -%>
+    </div>
+</div>
+    </span>
+<% else -%>
+    <a href='<%= stage_detail_path(:pipeline_name => ______scope[:pipeline].getName(),
+                                   :pipeline_counter => ______scope[:pipeline].getCounter(),
+                                   :stage_name => ______scope[:stage].getName(),
+                                   :stage_counter => ______scope[:stage].getCounter(),
+                                   :only_path => !______scope[:rendering_gadget]) -%>' class='stage' <%= ______scope[:rendering_gadget] ? "target='_blank'" : "" %>>
+        <% _______scope = {:pipeline => ______scope[:pipeline], :stage => ______scope[:stage], :total_width => ______scope[:total_width]}; -%><%
+   _______scope[:state] = _______scope[:stage].getState()
+   _______scope[:stage_name] = _______scope[:stage].getName()
+   _______scope[:last_run_stage] = _______scope[:pipeline].isLatestStage(_______scope[:stage])
+%>
+<div class="stage_bar_wrapper <%= _______scope[:last_run_stage] ? " last_run_stage" : "" -%>">
+    <div class="stage_bar <%= _______scope[:state] -%>" title="<%= "%s (%s)" % [_______scope[:stage_name], _______scope[:state]] -%>" style='width: <%= stage_width_em(_______scope[:pipeline].getStageHistory().size(), _______scope[:last_run_stage], _______scope[:total_width]) -%>'>
+        <%= check_for_cancelled_contents(_______scope[:state]) -%>
+    </div>
+</div>
+    </a>
+<% end -%>
+    <% end %>
+</div>
+
+</div>
+
+            </div>
+            <% ____scope = {:active_pipeline_in_pipeline => active_pipeline_in_pipeline, :should_display_previously_blurb =>  ___scope[:should_display_previously_blurb]}; -%><% ____scope[:rendering_gadget] ||= false %>
+<div class="previously_wrapper">
+    <% if ____scope[:should_display_previously_blurb] && ____scope[:active_pipeline_in_pipeline].isAnyStageActive() -%>
+        <% ____scope[:active_stage] = ____scope[:active_pipeline_in_pipeline].activeStage() -%>
+        <% if ____scope[:active_stage].hasPreviousStage() -%>
+            <div class="previously">
+                <span class="label"><%=l.string("Previously Blurb")-%></span>
+                <% ____scope[:previous_stage] = ____scope[:active_stage].getPreviousStage() -%>
+                <% ____scope[:previous_stage_identifier] = ____scope[:previous_stage].getIdentifier() -%>
+                <% ____scope[:stage_result] = ____scope[:previous_stage].getResult() -%>
+                <a class="result" href="<%= stage_detail_path_for_identifier(____scope[:previous_stage_identifier], :only_path => !____scope[:rendering_gadget]) -%>" <%= ____scope[:rendering_gadget] ? "target='_blank'" : "" -%> 
+                   title="<%= ____scope[:previous_stage_identifier].getPipelineLabel() -%>">
+                    <span class="color_code_small <%= ____scope[:stage_result] -%>">
+                        <%= check_for_cancelled_contents(____scope[:stage_result]) %>
+                    </span> <%= ____scope[:stage_result] -%>
+                </a>
+            </div>
+        <% end -%>
+    <% end -%>
+</div>
+
+        <% end -%>
+    </div>
+<% end -%>
+
+<div class="pipeline_operations">
+    <% if ___scope[:show_controls] && ___scope[:pipeline_model].canOperate() -%>
+        <% ___scope[:trigger_label] = l.string('TRIGGER')
+           ___scope[:trigger_with_option_label] = l.string('TRIGGER_WITH_OPTIONS')
+        -%>
+        <% ____scope = {:pipeline_model=> ___scope[:pipeline_model], :label=>"#{___scope[:trigger_label]}"}; -%><% ____scope[:pipeline] = ____scope[:pipeline_model].getLatestPipelineInstance() -%>
+<%= pipeline_operations_blocking_form_remote_tag(:url => api_pipeline_action_path(:pipeline_name => ____scope[:pipeline].getName(), :action => "schedule"),
+                    :html => {
+                        :onsubmit => "PipelineOperations.onTrigger(this, '#{____scope[:pipeline].getName()}', '#{api_pipeline_action_path(:pipeline_name => ____scope[:pipeline].getName(), :action => "schedule")}'); return false;"
+                    })
+-%>
+    <div class='operate trigger_wrapper'>
+        <%= submit_button(____scope[:label], {:type=> 'image', :disabled => !____scope[:pipeline_model].canForce(), :id => "deploy-#{____scope[:pipeline].getName()}"}) %>
+    </div>
+<%= end_form_tag %>
+
+        <% ____scope = {:pipeline => ___scope[:pipeline_model].getLatestPipelineInstance(),
+                                                                                                 :label => "#{___scope[:trigger_with_option_label]}",
+                                                                                                 :can_trigger => ___scope[:pipeline_model].canForce(),
+                                                                                                 :has_upstream_material => false}; -%><%= pipeline_operations_blocking_form_remote_tag :url => { :controller => 'pipelines', :action => 'show_for_trigger' },
+                             :html => {
+                                     :onsubmit => "PipelineOperations.onTriggerWithOptions(this, '#{____scope[:pipeline].getName()}', '#{l.string('TRIGGER')}', '#{pipeline_show_with_option_path}'); return false;"
+                             }
+
+-%>
+    <input type="hidden" name="pipeline_name" value="<%=____scope[:pipeline_name]=____scope[:pipeline].getName()%>"/>
+    <div class='operate trigger_with_options_wrapper'>
+        <%= submit_button(____scope[:label], :type => 'image', :disabled => !____scope[:can_trigger], :id => "deploy-with-options-#{____scope[:pipeline].getName()}") -%>
+    </div>
+    <% if ____scope[:has_upstream_material] %>
+        <input type="hidden" name="pegged_revisions[<%= ____scope[:pegged_pipeline] %>]" value="<%= ____scope[:pegged_revision] %>"/>
+    <% end%>
+<%= end_form_tag %>
+        <% ____scope = {:pause_info => ___scope[:pipeline_model].getPausedInfo(), :pipeline_name => ___scope[:pipeline_name]}; -%><% if ____scope[:pause_info].isPaused() %>
+    <form action="<%= unpause_pipeline_path(:pipeline_name => ____scope[:pipeline_name]) -%>" method="post" onsubmit="PipelineOperations.onUnPause(this, '<%= ____scope[:pipeline_name] -%>', '<%= unpause_pipeline_path(____scope[:pipeline_name]) -%>'); return false;">
+        <div class='operate unpause_wrapper'>
+            <%= submit_button("Unpause", :type=> "image", :class => 'primary', :id => "unpause-#{____scope[:pipeline_name]}") %>
+        </div>
+    </form>
+<% else
+    ____scope[:pause_info_id] = "pause-info-#{____scope[:pipeline_name]}"
+    ____scope[:pause_onclick] = "Modalbox.show($(\"#{____scope[:pause_info_id]}\"),{title: \"Pause pipeline: #{____scope[:pipeline_name]} \",overlayClose:false})"
+-%>
+    <div class='operate pause_wrapper'>
+        <%= submit_button("Pause", {:type=> "image", :id => "confirm-pause-#{____scope[:pipeline_name]}", :onclick => "#{____scope[:pause_onclick]}"}) %>
+    </div>
+    <div id="<%= ____scope[:pause_info_id] %>" style="display:none">
+        <form action="<%= pause_pipeline_path(:pipeline_name => ____scope[:pipeline_name]) -%>" method="post" onsubmit="PipelineOperations.onPause(this, '<%= ____scope[:pipeline_name] -%>', '<%= pause_pipeline_path(____scope[:pipeline_name]) -%>'); return false;">
+            <div class="sub_tab_container">
+                <div class='pause_reason'>
+                    Specify a reason for pausing schedule on pipeline '<%= ____scope[:pipeline_name] %>': <input type="text" name="pauseCause" maxlength="255"/>
+                </div>
+            </div>
+            <div class="actions">
+                <%= submit_button("Ok", :class=> "primary", :id => "pause-#{____scope[:pipeline_name]}") %>
+                <%= submit_button("Close", :onclick => "Modalbox.hide()", :type => "button") %>
+            </div>
+        </form>
+    </div>
+<% end -%>
+    <% end -%>
+</div>
+<% ____scope = {:pause_info => ___scope[:pipeline_model].getPausedInfo()}; -%><% if ____scope[:pause_info].isPaused() %>
+    <span class="pause_description paused_by">Paused by <%= ____scope[:pause_info].getPauseBy() %> </span>
+    <span class="pause_description pause_message">(<%= h(____scope[:pause_info].getPauseCause()) %>)</span>
+<% end %>
+
+<% if (__scope[:material_count] = __scope[:pipeline].getMaterials().size()) > 0 -%>
+    <%
+        has_new_materials_class = ""
+        if __scope[:pipeline_model].hasNewRevisions()
+            has_new_materials_class = "has_new_materials"
+        end
+    %>
+    <div class="deployed_revisions <%=has_new_materials_class%>">
+        <a class='materials_count hidereveal_expander' id="<%= __scope[:show_hide_link] = __scope[:pipeline_name] + '_show_hide_revisions' %>"><%= __scope[:material_count] %> Material(s):</a>
+        <table style='width: 100%' class="materials hidereveal_content list_table">
+            <tr>
+                <th style='width: 10%' class="noshow"></th>
+                <th style='width: 30%' class="material_name">Material</th>
+                <th style='width: 30%' class="revision_number">Revision</th>
+                <th style='width: 30%' class="date">Check-in/trigger</th>
+            </tr>
+            <% __scope[:pipeline].getMaterials().each do |material_in_env_pipeline|
+                __scope[:revision] = __scope[:pipeline].findCurrentMaterialRevisionForUI(material_in_env_pipeline) -%>
+                <tr <% if __scope[:pipeline].hasNewRevisions(material_in_env_pipeline) -%>class="revision-row"<% end -%> >
+                    <td class="noshow">
+                    <% if __scope[:pipeline].hasNewRevisions(material_in_env_pipeline) -%>                            
+                        <img class="has_new_material_revisions" src="<%=image_path('/images/icon-12-alert.png')%>">
+                    <% end -%>
+                    </td>
+                    <td class="material_name" title="<%= material_in_env_pipeline.getDisplayName() %>">
+                        <%= smart_word_breaker(material_in_env_pipeline.getTruncatedDisplayName()) %>
+                    </td>
+                    <td class="revision_number" title="<%= __scope[:revision] ? __scope[:revision].getLatestRevisionString() : "N/A" %>">
+                        <%= __scope[:revision] ? smart_word_breaker(__scope[:revision].getLatestShortRevision()) : "N/A" %>
+                    </td>
+                    <td class="date" title="<%= __scope[:revision] ? __scope[:revision].getDateOfLatestModification().iso8601 : "N/A" %>">
+                        <%= __scope[:revision] ? __scope[:revision].getDateOfLatestModification().display_time : "N/A" %>
+                    </td>
+                </tr>
+            <% end %>
+        </table>
+    </div>
+    <%- __scope[:pipeline_model_id] = env_pipeline_dom_id(__scope[:pipeline_model]) -%>
+    <script type='text/javascript'>Util.on_load(function() { AjaxRefreshers.main().afterRefreshOf('<%= __scope[:pipeline_model_id] -%>', function() { make_collapsable('<%= __scope[:pipeline_model_id] -%>'); });});</script>
+<% end %>
+<div class='deploy'>
+    <% if __scope[:pipeline_model].hasNewRevisions() || __scope[:pipeline_model].hasNeverCheckedForRevisions() -%>
+        <% ___scope = {:pipeline_model=>__scope[:pipeline_model], :label=>"Deploy Latest"}; -%><% ___scope[:pipeline] = ___scope[:pipeline_model].getLatestPipelineInstance() -%>
+<%= pipeline_operations_blocking_form_remote_tag(:url => api_pipeline_action_path(:pipeline_name => ___scope[:pipeline].getName(), :action => "schedule"),
+                    :html => {
+                        :onsubmit => "PipelineOperations.onTrigger(this, '#{___scope[:pipeline].getName()}', '#{api_pipeline_action_path(:pipeline_name => ___scope[:pipeline].getName(), :action => "schedule")}'); return false;"
+                    })
+-%>
+    <div class='operate trigger_wrapper'>
+        <%= submit_button(___scope[:label], {:type=> 'image', :disabled => !___scope[:pipeline_model].canForce(), :id => "deploy-#{___scope[:pipeline].getName()}"}) %>
+    </div>
+<%= end_form_tag %>
+    <% end -%>
+    <%= blocking_form_remote_tag :url => { :controller => 'pipelines', :action => 'show' },
+                       :success => "Modalbox.show(request.responseText, { title: '#{__scope[:pipeline_name]} - Deploy', overlayClose: false, width: 850, height: 525, slideDownDuration: 0, overlayDuration: 0});" -%>
+        <div class='operate trigger_with_options_wrapper'>
+            <input type="hidden" name="pipeline_name" value="<%= __scope[:pipeline_name] %>"/>
+            <%= submit_button(l.string("DEPLOY_SPECIFIC_REVISION"), :type => 'image', :class=> "change_revision") %>
+        </div>
+    <%= end_form_tag -%>
+</div>
+                        <% end %>
+                    <% end %>
+                </div>
+                <div class="divider"></div>
+            <% end %>
+        <% end %>
+        <%= end_content_wrapper %>
+    </div>
+</div>
+
+    </div>
+<% end %>
+
+  </div>
+
+<script type="text/javascript">
+    Util.on_load(function() {
+        <% if auto_refresh? %>
+        AjaxRefreshers.addRefresher(new DashboardAjaxRefresher('<%= url_for(:action => 'index', :format=>"json") %>',
+        {redirectUrl: '<%= url_for_login %>', className: '.environment', refreshCompleted: function(isPartialRefresh) {
+            jQuery('span.time').each(function() {
+                Util.convert_to_timeago(this);
+            });
+        } }), true);
+        <% else %>
+        jQuery('span.time').each(function() {
+            Util.convert_to_timeago_on_timer(this)();
+        });
+        <% end %>
+        jQuery('span.time').each(function() {
+            Util.convert_to_timeago(this);
+        });
+        ElementAligner.hookupAlignEvents();
+    });
+</script>
+

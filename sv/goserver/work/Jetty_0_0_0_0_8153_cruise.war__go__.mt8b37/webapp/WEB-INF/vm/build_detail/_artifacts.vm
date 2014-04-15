@@ -1,0 +1,12 @@
+<div class="widget container-in-body" id="tab-content-of-artifacts" $artifacts_extra_attrs>
+    #if ($presenter.artifactFiles.size())
+        #if( $presenter.artifactFiles.size() > 0)
+            <div class="artifacts-operations-container">
+            <a class="collapse-all" onclick="BuildDetail.expandAll()">(+) Expand All</a> <a class="expand-all" onclick="BuildDetail.collapseAll()">(-) Collapse All</a>
+            </div>
+        #end
+    #end
+    <div class="files">
+        #parse ( "shared/_artifacts.vm" )
+    </div>
+</div>

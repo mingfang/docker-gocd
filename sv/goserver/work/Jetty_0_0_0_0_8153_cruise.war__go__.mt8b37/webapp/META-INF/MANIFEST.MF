@@ -1,8 +1,0 @@
-Build-By: go
-Build-Jdk: 1.6.0_31
-Implementation-Title: Go - ThoughtWorks Studios
-Implementation-Version: 
-Go-Version: 13.4.1
-Manifest-Version: 1.0
-Created-By: Buildr
-

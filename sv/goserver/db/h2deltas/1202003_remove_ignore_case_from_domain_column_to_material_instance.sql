@@ -1,1 +1,0 @@
-ALTER TABLE materials ALTER COLUMN domain VARCHAR(255);

@@ -3,10 +3,15 @@
   <server artifactsdir="artifacts" commandRepositoryLocation="default" serverId="556261c7-203e-4dc5-bdac-b09f772eebab" />
   <environments>
     <environment name="cloud2" />
-    <environment name="cloud1" />
+    <environment name="cloud1">
+      <agents>
+        <physical uuid="775a6b57-4005-4399-86df-8ae103ddf907" />
+      </agents>
+    </environment>
   </environments>
   <agents>
     <agent hostname="0da3e7ebb3d4" ipaddress="172.17.0.2" uuid="7cb09a14-141f-4084-a046-9713698d20e3" />
+    <agent hostname="c2c5fc738301" ipaddress="172.17.0.2" uuid="775a6b57-4005-4399-86df-8ae103ddf907" />
   </agents>
 </cruise>
 

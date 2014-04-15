@@ -1,7 +1,0 @@
-<html>
-<body>
-<form action="database/create-backup" method="POST">
-    <input type="submit" value="Backup Database"/>
-</form>
-</body>
-</html>

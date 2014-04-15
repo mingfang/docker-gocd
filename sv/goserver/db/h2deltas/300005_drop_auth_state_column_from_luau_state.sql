@@ -1,4 +1,0 @@
-ALTER TABLE luauState DROP COLUMN authState;
-
---//@UNDO
-ALTER TABLE luauState ADD COLUMN authState VARCHAR(255);

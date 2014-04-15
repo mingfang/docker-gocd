@@ -1,5 +1,0 @@
-<div id="success-container">
-    <div class="ab-bg"><span class="ab-corner lvl1"></span><span class="ab-corner lvl2"></span><span class="ab-corner lvl3"></span><span class="ab-corner lvl4"></span></div>
-    <div id="success-box">${success_message}</div>
-    <div class="ab-bg"><span class="ab-corner lvl4"></span><span class="ab-corner lvl3"></span><span class="ab-corner lvl2"></span><span class="ab-corner lvl1"></span></div>
-</div>

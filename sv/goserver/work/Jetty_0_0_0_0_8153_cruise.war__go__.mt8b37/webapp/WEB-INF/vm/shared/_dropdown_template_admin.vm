@@ -1,3 +1,0 @@
-<li role="presentation">
-    <a href="$req.getContextPath()/admin/templates">$l.localize("TEMPLATES")</a>
-</li>

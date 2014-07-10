@@ -5,5 +5,5 @@ export GO_SERVER_SSL_PORT
 SERVER_WORK_DIR=/var/lib/go-server
 export SERVER_WORK_DIR
 DAEMON=N
-JAVA_HOME=/usr/lib/jvm/java-7-oracle/jre
+JAVA_HOME=/usr/lib/jvm/java-8-oracle/jre
 export JAVA_HOME

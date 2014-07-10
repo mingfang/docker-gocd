@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="69">
-  <server artifactsdir="artifacts" commandRepositoryLocation="default" serverId="556261c7-203e-4dc5-bdac-b09f772eebab" />
-  <environments>
-    <environment name="cloud2" />
-    <environment name="cloud1">
-      <agents>
-        <physical uuid="775a6b57-4005-4399-86df-8ae103ddf907" />
-      </agents>
-    </environment>
-  </environments>
-  <agents>
-    <agent hostname="0da3e7ebb3d4" ipaddress="172.17.0.2" uuid="7cb09a14-141f-4084-a046-9713698d20e3" />
-    <agent hostname="c2c5fc738301" ipaddress="172.17.0.2" uuid="775a6b57-4005-4399-86df-8ae103ddf907" />
-  </agents>
+<cruise xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="cruise-config.xsd" schemaVersion="72">
+  <server artifactsdir="artifacts" agentAutoRegisterKey="1234567890" commandRepositoryLocation="default" serverId="556261c7-203e-4dc5-bdac-b09f772eebab" />
+  <pipelines group="defaultGroup">
+    <pipeline name="docker-ssh" isLocked="false" template="Docker_Template">
+      <materials>
+        <git url="https://github.com/mingfang/docker-ssh.git" materialName="Dockerfile" />
+      </materials>
+    </pipeline>
+  </pipelines>
+  <templates>
+    <pipeline name="Docker_Template">
+      <stage name="build">
+        <jobs>
+          <job name="build">
+            <tasks>
+              <exec command="./build">
+                <runif status="passed" />
+              </exec>
+            </tasks>
+          </job>
+        </jobs>
+      </stage>
+    </pipeline>
+  </templates>
 </cruise>
 

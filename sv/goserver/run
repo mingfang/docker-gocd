@@ -2,5 +2,7 @@
 
 #sv start socklog-unix || exit 1
 
+sed -i "s|<agent hostname.*||" /etc/go/cruise-config.xml
+
 exec 2>&1
 exec /usr/share/go-server/server.sh

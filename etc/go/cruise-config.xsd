@@ -12,15 +12,6 @@
                 <xsd:element minOccurs="0" maxOccurs="1" name="server">
                     <xsd:complexType>
                         <xsd:all>
-                            <xsd:element minOccurs="0" maxOccurs="1" name="license">
-                                <xsd:complexType>
-                                    <xsd:simpleContent>
-                                        <xsd:extension base="xsd:string">
-                                            <xsd:attribute name="user" type="xsd:string"/>
-                                        </xsd:extension>
-                                    </xsd:simpleContent>
-                                </xsd:complexType>
-                            </xsd:element>
                             <xsd:element minOccurs="0" maxOccurs="1" name="security" type="securityType"/>
                             <xsd:element minOccurs="0" maxOccurs="1" name="mailhost" type="mailHostType"/>
                         </xsd:all>
@@ -61,7 +52,7 @@
                     </xsd:unique>
                 </xsd:element>
             </xsd:sequence>
-            <xsd:attribute name="schemaVersion" type="xsd:int" use="required" fixed="69"/>
+            <xsd:attribute name="schemaVersion" type="xsd:int" use="required" fixed="72"/>
         </xsd:complexType>
         <xsd:unique name="uniquePipelines">
             <xsd:selector xpath="pipelines"/>
@@ -112,7 +103,7 @@
     </xsd:complexType>
     <xsd:complexType name="pluginConfigurationType">
         <xsd:attribute type="xsd:string" name="id"/>
-        <xsd:attribute type="xsd:string" name="version"/>
+        <xsd:attribute type="xsd:string" name="version" use="optional"/>
     </xsd:complexType>
     <xsd:complexType name="configurationType">
         <xsd:sequence>
@@ -410,6 +401,21 @@
     </xsd:attributeGroup>
     <xsd:complexType name="taskType" abstract="true">
     </xsd:complexType>
+    <xsd:complexType name="pluggableTaskType">
+        <xsd:complexContent mixed="false">
+            <xsd:extension base="taskType">
+                <xsd:sequence>
+                    <xsd:element name="pluginConfiguration" minOccurs="1" maxOccurs="1" type="pluginConfigurationType"/>
+                    <xsd:element name="configuration" minOccurs="0" maxOccurs="1" type="configurationType"/>
+                    <xsd:choice minOccurs="0" maxOccurs="unbounded">
+                        <xsd:element name="runif" type="runIfType"/>
+                        <xsd:element name="oncancel" type="onCancelType"/>
+                    </xsd:choice>
+                </xsd:sequence>
+                <xsd:attribute name="description" type="xsd:string" use="optional"/>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
     <xsd:complexType name="antType">
         <xsd:complexContent mixed="false">
             <xsd:extension base="taskType">
@@ -474,32 +480,38 @@
         </xsd:complexContent>
     </xsd:complexType>
 
-    <xsd:element abstract="true" name="task" type="taskType"/>
-    <xsd:element name="ant" substitutionGroup="task" type="antType">
+    <xsd:element abstract="true" name="baseTask" type="taskType"/>
+    <xsd:element name="task" substitutionGroup="baseTask" type="pluggableTaskType">
+        <xsd:unique name='uniqueRunIfTypeForPluggableTask'>
+            <xsd:selector xpath="runif"/>
+            <xsd:field xpath="@status"/>
+        </xsd:unique>
+    </xsd:element>
+    <xsd:element name="ant" substitutionGroup="baseTask" type="antType">
         <xsd:unique name='uniqueRunIfTypeForAnt'>
             <xsd:selector xpath="runif"/>
             <xsd:field xpath="@status"/>
         </xsd:unique>
     </xsd:element>
-    <xsd:element name="nant" substitutionGroup="task" type="nantType">
+    <xsd:element name="nant" substitutionGroup="baseTask" type="nantType">
         <xsd:unique name='uniqueRunIfTypeForNant'>
             <xsd:selector xpath="runif"/>
             <xsd:field xpath="@status"/>
         </xsd:unique>
     </xsd:element>
-    <xsd:element name="exec" substitutionGroup="task" type="execType">
+    <xsd:element name="exec" substitutionGroup="baseTask" type="execType">
         <xsd:unique name='uniqueRunIfTypeForExec'>
             <xsd:selector xpath="runif"/>
             <xsd:field xpath="@status"/>
         </xsd:unique>
     </xsd:element>
-    <xsd:element name="rake" substitutionGroup="task" type="rakeType">
+    <xsd:element name="rake" substitutionGroup="baseTask" type="rakeType">
         <xsd:unique name='uniqueRunIfTypeForRake'>
             <xsd:selector xpath="runif"/>
             <xsd:field xpath="@status"/>
         </xsd:unique>
     </xsd:element>
-    <xsd:element name="fetchartifact" substitutionGroup="task" type="fetchType">
+    <xsd:element name="fetchartifact" substitutionGroup="baseTask" type="fetchType">
         <xsd:unique name='uniqueRunIfTypeForFetch'>
             <xsd:selector xpath="runif"/>
             <xsd:field xpath="@status"/>
@@ -508,7 +520,7 @@
 
     <xsd:complexType name="tasksType">
         <xsd:sequence>
-            <xsd:element minOccurs="0" maxOccurs="unbounded" ref="task"/>
+            <xsd:element minOccurs="0" maxOccurs="unbounded" ref="baseTask"/>
             <xsd:any minOccurs="0" maxOccurs="unbounded"/>
         </xsd:sequence>
     </xsd:complexType>
@@ -788,7 +800,7 @@
     <xsd:complexType name="onCancelType">
         <xsd:sequence>
             <xsd:choice>
-                <xsd:element ref="task" minOccurs="0" maxOccurs="1"/>
+                <xsd:element ref="baseTask" minOccurs="0" maxOccurs="1"/>
                 <xsd:any minOccurs="0" maxOccurs="1"/>
             </xsd:choice>
         </xsd:sequence>

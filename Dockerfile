@@ -28,12 +28,12 @@ RUN apt-get install -y python-software-properties && \
     apt-get install -y oracle-java8-installer
 
 #Go Server
-RUN wget http://download.go.cd/gocd-deb/go-server-14.2.0-377.deb && \
+RUN wget http://download.go.cd/gocd-deb/go-server-14.4.0-1356.deb && \
     dpkg -i go-server-*.deb && \
     rm go-server-*.deb
 
 #Go Agent
-RUN wget http://download.go.cd/gocd-deb/go-agent-14.2.0-377.deb && \
+RUN wget http://download.go.cd/gocd-deb/go-agent-14.4.0-1356.deb && \
     dpkg -i go-agent-*.deb && \
     rm go-agent-*.deb
 

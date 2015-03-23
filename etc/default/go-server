@@ -7,3 +7,4 @@ export SERVER_WORK_DIR
 DAEMON=N
 JAVA_HOME=/usr/lib/jvm/java-8-oracle/jre
 export JAVA_HOME
+GO_SERVER_SYSTEM_PROPERTIES=-Djruby.compile.invokedynamic=false

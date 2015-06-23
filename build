@@ -1,1 +1,1 @@
-docker build -t goserver .
+docker build $@ -t goserver .

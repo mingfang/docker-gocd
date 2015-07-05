@@ -22,18 +22,29 @@ RUN apt-get install -y python-software-properties && \
     apt-get install -y oracle-java8-installer
 
 #Go Server
-RUN wget http://download.go.cd/gocd-deb/go-server-15.1.0-1863.deb && \
+RUN wget http://download.go.cd/local/15.2.0-2217/go-server-15.2.0-2217.deb && \
     dpkg -i go-server-*.deb && \
     rm go-server-*.deb
 
 #Go Agent
-RUN wget http://download.go.cd/gocd-deb/go-agent-15.1.0-1863.deb && \
+RUN wget http://download.go.cd/local/15.2.0-2217/go-agent-15.2.0-2217.deb && \
     dpkg -i go-agent-*.deb && \
     rm go-agent-*.deb
 
 #Docker client only
 RUN wget -O /usr/local/bin/docker https://get.docker.io/builds/Linux/x86_64/docker-latest && \
     chmod +x /usr/local/bin/docker
+
+#plugins
+RUN mkdir -p /var/lib/go-server/plugins/external && \
+    cd /var/lib/go-server/plugins/external && \
+    wget https://github.com/srinivasupadhya/gocd-build-status-notifier/releases/download/1.1/github-pr-status-1.1.jar
+RUN mkdir -p /var/lib/go-server/plugins/external && \
+    cd /var/lib/go-server/plugins/external && \
+    wget https://github.com/ashwanthkumar/gocd-build-github-pull-requests/releases/download/1.2/github-pr-poller-1.2.jar
+RUN mkdir -p /var/lib/go-server/plugins/external && \
+    cd /var/lib/go-server/plugins/external && \
+    wget https://github.com/srinivasupadhya/email-notifier/releases/download/v0.1/email-notifier-0.1.jar
 
 #Add runit services
 ADD sv /etc/service 

@@ -22,12 +22,12 @@ RUN apt-get install -y python-software-properties && \
     apt-get install -y oracle-java8-installer
 
 #Go Server
-RUN wget http://download.go.cd/local/15.2.0-2217/go-server-15.2.0-2217.deb && \
+RUN wget http://download.go.cd/gocd-deb/go-server-15.2.0-2248.deb && \
     dpkg -i go-server-*.deb && \
     rm go-server-*.deb
 
 #Go Agent
-RUN wget http://download.go.cd/local/15.2.0-2217/go-agent-15.2.0-2217.deb && \
+RUN wget http://download.go.cd/gocd-deb/go-agent-15.2.0-2248.deb && \
     dpkg -i go-agent-*.deb && \
     rm go-agent-*.deb
 
@@ -45,6 +45,8 @@ RUN mkdir -p /var/lib/go-server/plugins/external && \
 RUN mkdir -p /var/lib/go-server/plugins/external && \
     cd /var/lib/go-server/plugins/external && \
     wget https://github.com/srinivasupadhya/email-notifier/releases/download/v0.1/email-notifier-0.1.jar
+
+ADD etc/autoregister.properties /var/lib/go-agent/config/autoregister.properties
 
 #Add runit services
 ADD sv /etc/service 
